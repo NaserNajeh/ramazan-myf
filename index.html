@@ -432,6 +432,54 @@
       border: 1px solid rgba(255, 255, 255, .16);
     }
 
+    .toggleSwitch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+    }
+
+    .toggleSwitch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(255, 255, 255, .1);
+      transition: .4s;
+      border-radius: 34px;
+      border: 1px solid rgba(255, 255, 255, .2);
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 3px;
+      bottom: 3px;
+      background-color: #bbb;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked+.slider {
+      background-color: var(--gold);
+      border-color: var(--gold);
+    }
+
+    input:checked+.slider:before {
+      transform: translateX(20px);
+      background-color: #fff;
+    }
+
     input[type="range"] {
       width: 100%;
       margin-top: 10px;
@@ -647,13 +695,32 @@
               </div>
             </div>
             <div style="height:8px"></div>
+
             <div class="list" id="itemsList"></div>
 
-            <div style="height:12px"></div>
+            <div style="height:8px"></div>
             <div class="scaleBox">
               <div style="font-weight:1100; margin-bottom:6px;">عمل خاص</div>
               <div class="hint" style="margin-bottom:10px;">ملاحظة قصيرة لليوم (لا تدخل ضمن نسبة الإنجاز).</div>
               <textarea id="note" maxlength="140" placeholder="اكتب عملك الخاص هنا…"></textarea>
+            </div>
+
+            <div style="height:8px"></div>
+
+            <!-- صدقة الفطر - منفصلة -->
+            <div class="scaleBox" style="border-color:var(--text); background:rgba(0,0,0,.2);">
+              <div style="display:flex; align-items:center; justify-content:space-between;">
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span style="font-size:18px;">💰</span>
+                  <div style="font-weight:1100;">صدقة الفطر</div>
+                </div>
+                <label class="toggleSwitch">
+                  <input type="checkbox" id="fitrCheck">
+                  <span class="slider"></span>
+                </label>
+              </div>
+              <div class="hint" style="margin-top:6px;">تُخرج مرة واحدة في نهاية الشهر (لا تدخل في النسبة اليومية).
+              </div>
             </div>
 
             <div style="height:8px"></div>
@@ -807,7 +874,7 @@
         { key: "awwabin", label: "صلاة الأوابين، ٢-٤-٦ ركعات، بعد سنة المغرب" },
         { key: "wird_sabah", label: "ورد الصباح" },
         { key: "wird_masaa", label: "ورد المساء" },
-        { key: "fitr_sadaqah", label: "صدقة الفطر" }
+        { key: "wird_masaa", label: "ورد المساء" }
       ]
     };
 
@@ -1158,11 +1225,26 @@
 
     renderPagesCounter();
 
+    // ========= صدقة الفطر =========
+    const FITR_KEY = "ramadan_fitr_sadaqah_v1";
+    const fitrCheck = document.getElementById("fitrCheck");
+
+    function loadFitr() {
+      return localStorage.getItem(FITR_KEY) === "true";
+    }
+    function renderFitr() {
+      fitrCheck.checked = loadFitr();
+    }
+    fitrCheck.addEventListener("change", () => {
+      localStorage.setItem(FITR_KEY, fitrCheck.checked);
+    });
+
     // ========= Initial Render =========
     renderDay();
     renderStats();
     renderMonthTable();
     renderQuranCounter();
+    renderFitr();
   </script>
 </body>
 
