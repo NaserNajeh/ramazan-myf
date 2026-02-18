@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="ar" dir="rtl">
 
 <head>
@@ -66,7 +66,6 @@
         radial-gradient(closest-side at 20% 25%, rgba(216, 179, 90, .35), transparent 65%),
         radial-gradient(closest-side at 80% 20%, rgba(31, 191, 154, .28), transparent 60%),
         radial-gradient(closest-side at 55% 80%, rgba(255, 255, 255, .10), transparent 70%);
-      animation: floatGlow 10s ease-in-out infinite alternate;
       transform: translate3d(0, 0, 0);
     }
 
@@ -74,19 +73,8 @@
       background:
         radial-gradient(closest-side at 30% 70%, rgba(31, 191, 154, .22), transparent 62%),
         radial-gradient(closest-side at 75% 60%, rgba(216, 179, 90, .24), transparent 62%);
-      animation-duration: 14s;
       opacity: .8;
       mix-blend-mode: screen;
-    }
-
-    @keyframes floatGlow {
-      0% {
-        transform: translate(-2%, -1%) scale(1.02) rotate(0deg);
-      }
-
-      100% {
-        transform: translate(2%, 1.5%) scale(1.06) rotate(2deg);
-      }
     }
 
     .beams {
@@ -111,36 +99,18 @@
           rgba(216, 179, 90, 0) 100%);
       transform: rotate(18deg);
       filter: blur(10px);
-      animation: beamMove 9s linear infinite;
     }
 
     .beam.b2 {
       left: 35vw;
       width: 45vw;
       transform: rotate(-12deg);
-      animation-duration: 11s;
       opacity: .45;
       background: linear-gradient(180deg,
           rgba(31, 191, 154, 0) 0%,
           rgba(31, 191, 154, .14) 38%,
           rgba(216, 179, 90, .10) 58%,
           rgba(31, 191, 154, 0) 100%);
-    }
-
-    @keyframes beamMove {
-      0% {
-        transform: translateY(-6vh) rotate(18deg);
-        opacity: .30;
-      }
-
-      30% {
-        opacity: .65;
-      }
-
-      100% {
-        transform: translateY(10vh) rotate(18deg);
-        opacity: .35;
-      }
     }
 
     /* زخرفة إسلامية */
@@ -158,8 +128,8 @@
       top: 0;
       z-index: 20;
       padding: 14px 12px 12px;
-      backdrop-filter: blur(14px);
-      background: linear-gradient(135deg, rgba(255, 255, 255, .08), rgba(255, 255, 255, .05));
+      /* removed backdrop-filter: blur(14px); */
+      background: linear-gradient(135deg, rgba(11, 93, 74, 0.95), rgba(4, 21, 19, 0.98));
       border-bottom: 1px solid rgba(255, 255, 255, .12);
     }
 
@@ -264,12 +234,12 @@
     }
 
     .card {
-      background: linear-gradient(135deg, rgba(255, 255, 255, .16), rgba(255, 255, 255, .10));
+      background: rgba(11, 93, 74, 0.4);
       border: 1px solid rgba(255, 255, 255, .18);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       overflow: hidden;
-      backdrop-filter: blur(16px);
+      /* removed backdrop-filter: blur(16px); */
     }
 
     .cardHead {
@@ -658,7 +628,7 @@
               <button class="btn" id="nextDay">اليوم التالي</button>
             </div>
 
-            <div style="height:10px"></div>
+            <div style="height:8px"></div>
 
             <div class="scaleBox">
               <div class="scaleTop">
@@ -676,11 +646,8 @@
                 <button class="btn danger" id="quranReset">تصفير</button>
               </div>
             </div>
-            <div style="height:12px"></div>
+            <div style="height:8px"></div>
             <div class="list" id="itemsList"></div>
-
-            <div style="height:12px"></div>
-
 
             <div style="height:12px"></div>
             <div class="scaleBox">
@@ -689,7 +656,7 @@
               <textarea id="note" maxlength="140" placeholder="اكتب عملك الخاص هنا…"></textarea>
             </div>
 
-            <div style="height:12px"></div>
+            <div style="height:8px"></div>
             <div class="navRow" style="grid-template-columns: 1fr 1fr 1fr;">
               <button class="btn primary" id="markAll">تأشير كل البنود</button>
               <button class="btn" id="clearDay">مسح اليوم</button>
@@ -697,6 +664,7 @@
             </div>
           </div>
         </section>
+
 
         <section class="card">
           <div class="cardHead">
@@ -707,7 +675,7 @@
               <summary>إحصاءات سريعة</summary>
               <div class="inside" id="statsBox"></div>
             </details>
-            <div style="height:10px"></div>
+            <div style="height:6px"></div>
             <details>
               <summary>جدول الشهر (30 يوم)</summary>
               <div class="inside">
@@ -721,6 +689,55 @@
         </section>
       </div>
 
+
+      <!-- فاصل مميز قبل قسم طلاب القرآن -->
+      <div style="margin-top:16px; margin-bottom:6px; display:flex; align-items:center; gap:12px;">
+        <div
+          style="flex:1; height:1px; background:linear-gradient(90deg, transparent, rgba(216,179,90,.5), transparent);">
+        </div>
+        <div
+          style="font-size:14px; font-weight:900; color:var(--gold); letter-spacing:.5px; white-space:nowrap; text-shadow:0 0 14px rgba(216,179,90,.5);">
+          ✦ خاص بطلبة القرآن الكريم ✦</div>
+        <div
+          style="flex:1; height:1px; background:linear-gradient(90deg, transparent, rgba(216,179,90,.5), transparent);">
+        </div>
+      </div>
+
+      <!-- قسم طلاب القرآن - في أسفل الصفحة -->
+      <section class="card" style="margin-top:8px; border-color:rgba(216,179,90,.3);">
+        <div class="cardHead" style="background: linear-gradient(135deg, rgba(216,179,90,.18), rgba(31,191,154,.10));">
+          <h2 style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+            <span style="font-size:20px;">📖</span>
+            <span style="color:var(--gold); font-weight:900;">طالب القرآن الكريم</span>
+            <span
+              style="font-size:11px; font-weight:500; color:var(--muted); background:rgba(0,0,0,.2); padding:3px 8px; border-radius:999px; border:1px solid rgba(255,255,255,.12);">لا
+              تدخل في نسبة الإنجاز</span>
+          </h2>
+        </div>
+        <div class="cardBody">
+          <div style="font-size:13px; color:var(--muted); margin-bottom:12px;">عدد الصفحات المقروءة بتجويد اليوم</div>
+          <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <button class="btn" id="pagesMinusBtn"
+                style="min-width:44px; font-size:18px; padding:8px 14px;">−</button>
+              <div style="text-align:center; min-width:80px;">
+                <div id="pagesDisplay" style="font-size:36px; font-weight:900; color:var(--gold); line-height:1;">0
+                </div>
+                <div style="font-size:11px; color:var(--muted); margin-top:2px;">صفحة</div>
+              </div>
+              <button class="btn primary" id="pagesPlusBtn"
+                style="min-width:44px; font-size:18px; padding:8px 14px;">+</button>
+            </div>
+            <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+              <button class="btn" id="pagesResetBtn" style="font-size:12px; padding:7px 12px;">تصفير اليوم</button>
+              <div id="pagesTotalDisplay"
+                style="font-size:12px; color:var(--muted); padding:6px 12px; background:rgba(216,179,90,.08); border-radius:10px; border:1px solid rgba(216,179,90,.2);">
+                مجموع الشهر: <strong id="pagesMonthTotal" style="color:var(--gold); font-size:14px;">0</strong> صفحة
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
       <div class="footerNote">مع تحيات - ملتقى الشباب المسلم - فلسطين • على iPhone: زر المشاركة → “إضافة إلى الشاشة
         الرئيسية”. على Android: ⋮ → “تثبيت التطبيق”.</div>
     </div>
@@ -949,6 +966,8 @@
         saveState(state);
         renderMonthTable();
       };
+      // Update pages counter when day changes
+      if (typeof renderPagesCounter === "function") renderPagesCounter();
     }
 
     function renderStats() {
@@ -1090,6 +1109,56 @@
       renderQuranCounter();
     };
 
+    // ========= عداد صفحات طالب القرآن =========
+    const PAGES_KEY = "ramadan_quran_pages_v1"; // { day: count }
+
+    function loadPagesData() {
+      try { return JSON.parse(localStorage.getItem(PAGES_KEY) || "{}"); } catch (e) { return {}; }
+    }
+    function savePagesData(data) { localStorage.setItem(PAGES_KEY, JSON.stringify(data)); }
+
+    function getPagesForDay(day) {
+      return Number(loadPagesData()[day] || 0);
+    }
+    function setPagesForDay(day, val) {
+      const data = loadPagesData();
+      data[day] = Math.max(0, val);
+      savePagesData(data);
+    }
+
+    function getMonthPagesTotal() {
+      const data = loadPagesData();
+      return Object.values(data).reduce((sum, v) => sum + Number(v || 0), 0);
+    }
+
+    function renderPagesCounter() {
+      const day = loadUI().currentDay;
+      const pages = getPagesForDay(day);
+      document.getElementById("pagesDisplay").textContent = pages;
+      document.getElementById("pagesMonthTotal").textContent = getMonthPagesTotal();
+    }
+
+    document.getElementById("pagesPlusBtn").onclick = () => {
+      const day = loadUI().currentDay;
+      setPagesForDay(day, getPagesForDay(day) + 1);
+      renderPagesCounter();
+    };
+
+    document.getElementById("pagesMinusBtn").onclick = () => {
+      const day = loadUI().currentDay;
+      setPagesForDay(day, getPagesForDay(day) - 1);
+      renderPagesCounter();
+    };
+
+    document.getElementById("pagesResetBtn").onclick = () => {
+      const day = loadUI().currentDay;
+      setPagesForDay(day, 0);
+      renderPagesCounter();
+    };
+
+    renderPagesCounter();
+
+    // ========= Initial Render =========
     renderDay();
     renderStats();
     renderMonthTable();
