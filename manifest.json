@@ -1,12 +1,12 @@
 {
-  "name": "محاسبة رمضان",
+  "name": "برنامج رمضان",
   "short_name": "رمضان",
-  "description": "جدول المحاسبة الرمضاني التفاعلي (يعمل دون إنترنت)",
+  "description": "برنامج رمضان التفاعلي (يعمل دون إنترنت)",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#1a0b2e",
-  "theme_color": "#110f33",
+  "background_color": "#041513",
+  "theme_color": "#0b5d4a",
   "lang": "ar",
   "dir": "rtl",
   "icons": [

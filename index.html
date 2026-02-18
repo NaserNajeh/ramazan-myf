@@ -4,31 +4,27 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>محاسبة رمضان</title>
+  <title>برنامج رمضان</title>
 
   <link rel="manifest" href="./manifest.json">
-  <meta name="theme-color" content="#110f33">
+  <meta name="theme-color" content="#0b5d4a">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="محاسبة رمضان">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <meta name="apple-mobile-web-app-title" content="برنامج رمضان">
 
   <style>
     :root {
-      --bg1: #1a0b2e;
-      --bg2: #110f33;
-      --glass: rgba(255, 255, 255, .08);
-      --glass2: rgba(255, 255, 255, .12);
-      --stroke: rgba(255, 255, 255, .15);
-      --text: #ffffff;
-      --muted: rgba(255, 255, 255, .65);
-      --gold: #ffb703;
-      --mint: #00f5d4;
-      --shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
-      --radius: 20px;
+      --bg1: #041513;
+      --bg2: #0b5d4a;
+      --glass: rgba(255, 255, 255, .10);
+      --glass2: rgba(255, 255, 255, .16);
+      --stroke: rgba(255, 255, 255, .18);
+      --text: rgba(255, 255, 255, .92);
+      --muted: rgba(255, 255, 255, .72);
+      --gold: #d8b35a;
+      --mint: #1fbf9a;
+      --shadow: 0 22px 60px rgba(0, 0, 0, .35);
+      --radius: 18px;
     }
 
     * {
@@ -42,145 +38,108 @@
 
     body {
       margin: 0;
-      font-family: 'Tajawal', system-ui, -apple-system, sans-serif;
-      background: #110f33;
+      font-family: system-ui, -apple-system, "Segoe UI", Tahoma, Arial, sans-serif;
+      background:
+        radial-gradient(1200px 700px at 15% 10%, rgba(216, 179, 90, .28), transparent 58%),
+        radial-gradient(900px 700px at 90% 20%, rgba(31, 191, 154, .22), transparent 60%),
+        linear-gradient(135deg, var(--bg1), var(--bg2));
       color: var(--text);
       overflow-x: hidden;
-      position: relative;
     }
 
-    /* نجوم الخلفية */
-    .stars {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 0;
-      background-image:
-        radial-gradient(1px 1px at 10% 10%, white 100%, transparent),
-        radial-gradient(1px 1px at 20% 40%, white 100%, transparent),
-        radial-gradient(2px 2px at 30% 70%, rgba(255, 255, 255, .5) 100%, transparent),
-        radial-gradient(1px 1px at 40% 20%, white 100%, transparent),
-        radial-gradient(1.5px 1.5px at 50% 50%, white 100%, transparent),
-        radial-gradient(1px 1px at 60% 80%, white 100%, transparent),
-        radial-gradient(2px 2px at 70% 30%, rgba(255, 255, 255, .6) 100%, transparent),
-        radial-gradient(1px 1px at 80% 10%, white 100%, transparent),
-        radial-gradient(1px 1px at 90% 60%, white 100%, transparent);
-      background-size: 500px 500px;
-      opacity: 0.4;
-      animation: twinkle 5s linear infinite alternate;
-    }
-
-    @keyframes twinkle {
-      from {
-        opacity: 0.3;
-        transform: translateY(0);
-      }
-
-      to {
-        opacity: 0.6;
-        transform: translateY(-20px);
-      }
-    }
-
-    /* هالة ملونة */
+    /* توهج وأشعة متحركة */
     .glow-layer {
       position: fixed;
+      inset: -30vh -30vw;
+      pointer-events: none;
+      filter: blur(24px);
+      opacity: .75;
+      z-index: 0;
+    }
+
+    .glow-layer::before,
+    .glow-layer::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(closest-side at 20% 25%, rgba(216, 179, 90, .35), transparent 65%),
+        radial-gradient(closest-side at 80% 20%, rgba(31, 191, 154, .28), transparent 60%),
+        radial-gradient(closest-side at 55% 80%, rgba(255, 255, 255, .10), transparent 70%);
+      animation: floatGlow 10s ease-in-out infinite alternate;
+      transform: translate3d(0, 0, 0);
+    }
+
+    .glow-layer::after {
+      background:
+        radial-gradient(closest-side at 30% 70%, rgba(31, 191, 154, .22), transparent 62%),
+        radial-gradient(closest-side at 75% 60%, rgba(216, 179, 90, .24), transparent 62%);
+      animation-duration: 14s;
+      opacity: .8;
+      mix-blend-mode: screen;
+    }
+
+    @keyframes floatGlow {
+      0% {
+        transform: translate(-2%, -1%) scale(1.02) rotate(0deg);
+      }
+
+      100% {
+        transform: translate(2%, 1.5%) scale(1.06) rotate(2deg);
+      }
+    }
+
+    .beams {
+      position: fixed;
       inset: 0;
       pointer-events: none;
-      z-index: 0;
-      background:
-        radial-gradient(circle at 10% 10%, rgba(255, 183, 3, 0.15), transparent 40%),
-        radial-gradient(circle at 90% 80%, rgba(0, 245, 212, 0.12), transparent 40%);
-      filter: blur(40px);
-    }
-
-    /* فوانيس رمضان */
-    .lanterns-container {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
+      opacity: .55;
       z-index: 1;
-      pointer-events: none;
-      display: flex;
-      justify-content: space-between;
-      padding: 0 5vw;
+      mix-blend-mode: screen;
     }
 
-    .lantern {
-      width: 40px;
-      height: auto;
-      transform-origin: top center;
-      animation: swing 3s ease-in-out infinite alternate;
-      filter: drop-shadow(0 0 10px rgba(255, 183, 3, 0.6));
+    .beam {
+      position: absolute;
+      width: 55vw;
+      height: 140vh;
+      top: -20vh;
+      left: -10vw;
+      background: linear-gradient(180deg,
+          rgba(216, 179, 90, 0) 0%,
+          rgba(216, 179, 90, .10) 30%,
+          rgba(31, 191, 154, .10) 55%,
+          rgba(216, 179, 90, 0) 100%);
+      transform: rotate(18deg);
+      filter: blur(10px);
+      animation: beamMove 9s linear infinite;
     }
 
-    .lantern.l2 {
-      width: 55px;
-      animation-duration: 4s;
-      animation-delay: -1s;
-      margin-top: -10px;
+    .beam.b2 {
+      left: 35vw;
+      width: 45vw;
+      transform: rotate(-12deg);
+      animation-duration: 11s;
+      opacity: .45;
+      background: linear-gradient(180deg,
+          rgba(31, 191, 154, 0) 0%,
+          rgba(31, 191, 154, .14) 38%,
+          rgba(216, 179, 90, .10) 58%,
+          rgba(31, 191, 154, 0) 100%);
     }
 
-    .lantern.l3 {
-      width: 35px;
-      animation-duration: 3.5s;
-      animation-delay: -2s;
-      margin-top: 15px;
-    }
-
-    @keyframes swing {
+    @keyframes beamMove {
       0% {
-        transform: rotate(3deg);
+        transform: translateY(-6vh) rotate(18deg);
+        opacity: .30;
+      }
+
+      30% {
+        opacity: .65;
       }
 
       100% {
-        transform: rotate(-3deg);
-      }
-    }
-
-    /* Lanterns */
-    .lanterns-container {
-      position: fixed;
-      top: -10px;
-      left: 0;
-      right: 0;
-      z-index: 50;
-      pointer-events: none;
-      display: flex;
-      justify-content: space-between;
-      padding: 0 2vw;
-      filter: drop-shadow(0 5px 15px rgba(255, 183, 3, 0.3));
-    }
-
-    .lantern {
-      width: 70px;
-      height: auto;
-      transform-origin: 50% 0;
-      animation: swing 3.5s ease-in-out infinite alternate;
-    }
-
-    .lantern.l2 {
-      width: 100px;
-      animation-duration: 4.5s;
-      animation-delay: -1.5s;
-      margin-top: -5px;
-    }
-
-    .lantern.l3 {
-      width: 65px;
-      animation-duration: 4s;
-      animation-delay: -2.5s;
-      margin-top: 15px;
-    }
-
-    @keyframes swing {
-      0% {
-        transform: rotate(5deg);
-      }
-
-      100% {
-        transform: rotate(-5deg);
+        transform: translateY(10vh) rotate(18deg);
+        opacity: .35;
       }
     }
 
@@ -189,10 +148,9 @@
       position: fixed;
       inset: 0;
       pointer-events: none;
-      opacity: .07;
+      opacity: .16;
       z-index: 1;
-      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path d="M50 0 L100 50 L50 100 L0 50 Z" fill="none" stroke="%23ffb703" stroke-width="1"/></svg>');
-      background-size: 60px 60px;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><defs><pattern id="p" width="64" height="64" patternUnits="userSpaceOnUse"><path d="M32 6 L46 20 L58 32 L46 44 L32 58 L18 44 L6 32 L18 20 Z" fill="none" stroke="%23d8b35a" stroke-width="1.2"/><circle cx="32" cy="32" r="6" fill="none" stroke="%23ffffff" stroke-opacity=".35" stroke-width="1"/><path d="M32 14 C42 14 50 22 50 32 C50 42 42 50 32 50 C22 50 14 42 14 32 C14 22 22 14 32 14 Z" fill="none" stroke="%231fbf9a" stroke-opacity=".55" stroke-width="1"/></pattern></defs><rect width="200" height="200" fill="url(%23p)"/></svg>');
     }
 
     header {
@@ -200,9 +158,9 @@
       top: 0;
       z-index: 20;
       padding: 14px 12px 12px;
-      backdrop-filter: blur(20px);
-      background: rgba(17, 15, 51, 0.6);
-      border-bottom: 1px solid var(--stroke);
+      backdrop-filter: blur(14px);
+      background: linear-gradient(135deg, rgba(255, 255, 255, .08), rgba(255, 255, 255, .05));
+      border-bottom: 1px solid rgba(255, 255, 255, .12);
     }
 
     .wrap {
@@ -246,20 +204,28 @@
     }
 
     .chip {
-      background: rgba(255, 255, 255, .05);
-      border: 1px solid rgba(255, 255, 255, .1);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 900;
+      background: rgba(255, 255, 255, .10);
+      border: 1px solid rgba(255, 255, 255, .16);
+      color: #fff;
+      white-space: nowrap;
+      box-shadow: 0 10px 22px rgba(0, 0, 0, .14);
     }
 
     .chip.gold {
-      background: rgba(255, 183, 3, .15);
-      border-color: rgba(255, 183, 3, .4);
-      color: #ffda75;
+      background: rgba(216, 179, 90, .14);
+      border-color: rgba(216, 179, 90, .25);
     }
 
     .chip.mint {
-      background: rgba(0, 245, 212, .15);
-      border-color: rgba(0, 245, 212, .4);
-      color: #7dfce8;
+      background: rgba(31, 191, 154, .12);
+      border-color: rgba(31, 191, 154, .22);
     }
 
     .icon {
@@ -298,27 +264,18 @@
     }
 
     .card {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--stroke);
+      background: linear-gradient(135deg, rgba(255, 255, 255, .16), rgba(255, 255, 255, .10));
+      border: 1px solid rgba(255, 255, 255, .18);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       overflow: hidden;
-      backdrop-filter: blur(20px);
+      backdrop-filter: blur(16px);
     }
 
     .cardHead {
-      padding: 15px;
-      background: linear-gradient(90deg, rgba(255, 183, 3, 0.1), rgba(0, 245, 212, 0.05));
-      border-bottom: 1px solid var(--stroke);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .cardHead::before {
-      content: "✦";
-      color: var(--gold);
-      font-size: 18px;
+      padding: 12px 12px 10px;
+      background: linear-gradient(135deg, rgba(216, 179, 90, .12), rgba(31, 191, 154, .10));
+      border-bottom: 1px solid rgba(255, 255, 255, .14);
     }
 
     .cardHead h2 {
@@ -338,46 +295,45 @@
     }
 
     .btn {
-      border: 1px solid var(--stroke);
-      background: rgba(255, 255, 255, 0.05);
-      padding: 12px 16px;
-      border-radius: 16px;
-      font-weight: 700;
-      color: #fff;
+      border: 1px solid rgba(255, 255, 255, .18);
+      background: linear-gradient(135deg, rgba(255, 255, 255, .14), rgba(255, 255, 255, .08));
+      padding: 11px 12px;
+      border-radius: 14px;
+      font-weight: 1000;
       cursor: pointer;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-      transition: all 0.2s ease;
+      color: #fff;
+      box-shadow: 0 10px 22px rgba(0, 0, 0, .18);
+      transition: transform .08s ease, filter .15s ease;
       position: relative;
       overflow: hidden;
     }
 
-    .btn:hover {
-      background: rgba(255, 255, 255, 0.1);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-      border-color: rgba(255, 255, 255, 0.3);
+    .btn::after {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, .25), transparent 55%);
+      transform: translateX(-30%);
+      opacity: .0;
+      transition: opacity .2s ease;
+    }
+
+    .btn:hover::after {
+      opacity: .55;
     }
 
     .btn:active {
-      transform: translateY(0);
+      transform: scale(.99);
     }
 
     .btn.primary {
-      background: linear-gradient(135deg, rgba(0, 245, 212, 0.2), rgba(0, 245, 212, 0.05));
-      border-color: rgba(0, 245, 212, 0.4);
-      color: #00f5d4;
-      text-shadow: 0 0 15px rgba(0, 245, 212, 0.5);
-    }
-
-    .btn.primary:hover {
-      background: linear-gradient(135deg, rgba(0, 245, 212, 0.3), rgba(0, 245, 212, 0.1));
-      box-shadow: 0 0 20px rgba(0, 245, 212, 0.2);
+      background: linear-gradient(135deg, rgba(31, 191, 154, .18), rgba(11, 93, 74, .18));
+      border-color: rgba(31, 191, 154, .26);
     }
 
     .btn.danger {
-      background: linear-gradient(135deg, rgba(255, 50, 50, 0.2), rgba(255, 50, 50, 0.05));
-      border-color: rgba(255, 50, 50, 0.4);
-      color: #ff6b6b;
+      background: linear-gradient(135deg, rgba(255, 107, 107, .18), rgba(216, 179, 90, .08));
+      border-color: rgba(255, 107, 107, .26);
     }
 
     .btn:disabled {
@@ -395,7 +351,7 @@
     }
 
     .centerInfo .d1 {
-      font-weight: 900;
+      font-weight: 1100;
       font-size: 14px;
     }
 
@@ -420,7 +376,7 @@
       padding: 7px 10px;
       border-radius: 999px;
       font-size: 12px;
-      font-weight: 900;
+      font-weight: 1000;
       border: 1px solid rgba(255, 255, 255, .18);
       background: rgba(255, 255, 255, .10);
       color: #fff;
@@ -452,15 +408,11 @@
       justify-content: space-between;
       align-items: center;
       gap: 12px;
-      padding: 14px;
+      padding: 12px 12px;
       border-radius: 16px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      background: rgba(255, 255, 255, 0.03);
-      transition: background 0.2s;
-    }
-
-    .item:hover {
-      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, .16);
+      background: linear-gradient(135deg, rgba(255, 255, 255, .12), rgba(255, 255, 255, .06));
+      backdrop-filter: blur(12px);
     }
 
     .item .meta {
@@ -471,7 +423,7 @@
 
     .item label {
       font-size: 13px;
-      font-weight: 900;
+      font-weight: 1050;
     }
 
     .hint {
@@ -480,33 +432,9 @@
     }
 
     input[type="checkbox"] {
-      appearance: none;
-      -webkit-appearance: none;
-      width: 24px;
-      height: 24px;
-      border: 2px solid var(--stroke);
-      border-radius: 8px;
-      background: rgba(0, 0, 0, 0.3);
-      cursor: pointer;
-      position: relative;
-      transition: all 0.2s ease;
-    }
-
-    input[type="checkbox"]:checked {
-      background: var(--mint);
-      border-color: var(--mint);
-      box-shadow: 0 0 10px rgba(0, 245, 212, 0.4);
-    }
-
-    input[type="checkbox"]:checked::after {
-      content: "✔";
-      position: absolute;
-      inset: 0;
-      display: grid;
-      place-items: center;
-      color: #000;
-      font-size: 14px;
-      font-weight: bold;
+      width: 22px;
+      height: 22px;
+      accent-color: var(--mint);
     }
 
     .scaleBox {
@@ -528,7 +456,7 @@
     .pill {
       padding: 7px 10px;
       border-radius: 999px;
-      font-weight: 900;
+      font-weight: 1050;
       font-size: 12px;
       background: rgba(255, 255, 255, .10);
       border: 1px solid rgba(255, 255, 255, .16);
@@ -570,7 +498,7 @@
       border-radius: 16px;
       border: 1px solid rgba(255, 255, 255, .16);
       background: linear-gradient(135deg, rgba(255, 255, 255, .12), rgba(255, 255, 255, .06));
-      font-weight: 900;
+      font-weight: 1050;
     }
 
     details summary::-webkit-details-marker {
@@ -605,17 +533,15 @@
     }
 
     th {
-      background: linear-gradient(180deg, rgba(255, 183, 3, 0.15), rgba(255, 183, 3, 0.05));
-      color: var(--gold);
+      background: linear-gradient(135deg, rgba(216, 179, 90, .18), rgba(31, 191, 154, .12));
       position: sticky;
       top: 0;
       z-index: 5;
-      font-weight: 900;
-      border-bottom: 1px solid var(--gold);
+      font-weight: 1100;
     }
 
     tr:hover td {
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(31, 191, 154, .06);
     }
 
     .footerNote {
@@ -648,7 +574,7 @@
     }
 
     .installBar .t1 {
-      font-weight: 900;
+      font-weight: 1100;
       font-size: 13px;
     }
 
@@ -669,7 +595,7 @@
       border: 1px solid rgba(255, 255, 255, .18);
       background: rgba(0, 0, 0, .12);
       color: #fff;
-      font-weight: 900;
+      font-weight: 1050;
       cursor: pointer;
     }
 
@@ -677,159 +603,28 @@
       background: linear-gradient(135deg, rgba(31, 191, 154, .22), rgba(11, 93, 74, .22));
       border-color: rgba(31, 191, 154, .28);
     }
-
-    /* PDF Modal */
-    .modal {
-      position: fixed;
-      inset: 0;
-      z-index: 10000;
-      background: rgba(0, 0, 0, .85);
-      backdrop-filter: blur(10px);
-      display: none;
-      flex-direction: column;
-      animation: fadeIn .2s ease;
-    }
-
-    .modal.open {
-      display: flex;
-    }
-
-    .modal-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 16px;
-      background: var(--bg2);
-      border-bottom: 1px solid var(--stroke);
-      color: #fff;
-    }
-
-    .footerNote {
-      text-align: center;
-      color: var(--muted);
-      font-size: 11px;
-      margin-top: 30px;
-      margin-bottom: 40px;
-      opacity: 0.8;
-      font-weight: 500;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .footerNote img {
-      width: 80px;
-      height: auto;
-      border-radius: 50%;
-      box-shadow: 0 0 20px rgba(255, 183, 3, 0.3);
-      border: 2px solid rgba(255, 183, 3, 0.3);
-    }
-
-    .footerNote strong {
-      font-weight: 900;
-      color: var(--gold);
-      font-size: 13px;
-    }
-
-    .pdf-container {
-      flex: 1;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-      background: #e8e8e8;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      padding: 4px 0;
-    }
-
-    .pdf-container canvas {
-      max-width: 100%;
-      height: auto !important;
-      display: block;
-    }
-
-    .pdf-loading {
-      color: #333;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100%;
-      font-family: 'Tajawal', sans-serif;
-      font-size: 18px;
-    }
-
-    .close-btn {
-      background: rgba(0, 0, 0, .2);
-      border: 1px solid rgba(255, 255, 255, .2);
-      color: #fff;
-      padding: 6px 12px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-      }
-
-      to {
-        opacity: 1;
-      }
-    }
   </style>
 </head>
 
 <body>
-  <div class="stars"></div>
   <div class="glow-layer"></div>
-  <div class="ornament-bg"></div>
-
-  <div class="lanterns-container">
-    <!-- Lantern 1: Hex Fanoos -->
-    <svg class="lantern l1" viewBox="0 0 100 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M50 0 L50 30" stroke="#ffb703" stroke-width="2" />
-      <path d="M50 30 L25 50 L75 50 Z" fill="#ffb703" opacity="0.9" />
-      <path d="M25 50 L15 110 L85 110 L75 50 Z" fill="rgba(255,183,3,0.15)" stroke="#ffb703" stroke-width="1.5" />
-      <path d="M40 70 L60 70 L50 90 Z" fill="#ffb703" opacity="0.7" />
-      <path d="M15 110 L50 150 L85 110 Z" fill="#ffb703" opacity="0.9" />
-      <circle cx="50" cy="150" r="4" fill="#ffb703" />
-    </svg>
-
-    <!-- Lantern 2: Crescent Dome -->
-    <svg class="lantern l2" viewBox="0 0 120 220" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M60 0 L60 40" stroke="#ffb703" stroke-width="2" />
-      <circle cx="60" cy="40" r="4" fill="#ffb703" />
-      <path d="M60 44 L30 70 L90 70 Z" fill="#ffb703" opacity="0.9" />
-      <rect x="30" y="70" width="60" height="80" rx="30" stroke="#ffb703" stroke-width="1.5"
-        fill="rgba(255,183,3,0.1)" />
-      <path d="M60 85 L45 105 L75 105 Z" fill="#ffb703" opacity="0.6" />
-      <path d="M60 135 L45 115 L75 115 Z" fill="#ffb703" opacity="0.6" />
-      <path d="M45 150 L60 170 L75 150 Z" fill="#ffb703" opacity="0.9" />
-      <circle cx="60" cy="170" r="5" fill="#ffb703" />
-    </svg>
-
-    <!-- Lantern 3: Tear Drop -->
-    <svg class="lantern l3" viewBox="0 0 100 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M50 0 L50 25" stroke="#ffb703" stroke-width="2" />
-      <circle cx="50" cy="25" r="3" fill="#ffb703" />
-      <path d="M50 28 L30 50 L70 50 Z" fill="#ffb703" opacity="0.9" />
-      <path d="M30 50 L20 100 L80 100 L70 50 Z" fill="rgba(255,183,3,0.15)" stroke="#ffb703" stroke-width="1.5" />
-      <path d="M20 100 L50 140 L80 100 Z" fill="#ffb703" opacity="0.9" />
-      <circle cx="50" cy="140" r="4" fill="#ffb703" />
-    </svg>
+  <div class="beams">
+    <div class="beam"></div>
+    <div class="beam b2"></div>
   </div>
+  <div class="ornament-bg"></div>
 
   <header>
     <div class="wrap">
       <div class="topbar">
         <div class="brand">
-          <div class="icon" aria-hidden="true"><img src="./icon-192.png" alt="رمضان"></div>
+          <img
+            src="https://github.com/NaserNajeh/ramazan-myf/blob/main/374946672_289987087105699_6304014763515905168_n.jpg?raw=true"
+            alt="شعار ملتقى الشباب المسلم"
+            style="width:46px; height:46px; border-radius:50%; border:2px solid var(--gold); box-shadow: 0 0 12px rgba(216,179,90,.30); object-fit:cover;">
           <div>
-            <h1>محاسبة رمضان</h1>
-            <div class="sub">جدول تفاعلي • حفظ تلقائي • يعمل دون إنترنت</div>
+            <h1>برنامج رمضان</h1>
+            <div class="sub">ملتقى الشباب المسلم • فلسطين</div>
           </div>
         </div>
         <div class="chips">
@@ -856,31 +651,40 @@
                 <div class="d2" id="dayDate">الأربعاء 18/2/2026</div>
                 <div class="badges">
                   <span class="badge miss" id="statusBadge">غير مكتمل</span>
-                  <span class="badge" id="boolBadge">0 / 13</span>
-                  <span class="badge" id="prayersBadge">الصلاة: 0/5</span>
+                  <span class="badge" id="boolBadge">0 / 9</span>
+
                 </div>
               </div>
               <button class="btn" id="nextDay">اليوم التالي</button>
             </div>
 
             <div style="height:10px"></div>
-            <div class="list" id="itemsList"></div>
 
-            <div style="height:12px"></div>
             <div class="scaleBox">
               <div class="scaleTop">
                 <div style="display:flex; flex-direction:column; gap:3px;">
-                  <div style="font-weight:900;">الصلاة على وقتها / 5</div>
-                  <div class="hint">اختر عدد الصلوات الخمس في وقتها لهذا اليوم.</div>
+                  <div style="font-weight:1100;">ختم القرآن (عدد الأجزاء) <span
+                      style='color:var(--gold); font-size:12px;'>— ختم القرآن مرة على الأقل</span></div>
+                  <div class="hint">العدّاد ثابت طوال الشهر — كل رقم يمثل جزءًا (حتى 30).</div>
                 </div>
-                <span class="pill" id="prayersPill">0 / 5</span>
+                <span class="pill" id="quranCountDisplay">0 / 30</span>
+                <span class="badge ok" id="khatmaBadge" style="margin-right:6px; font-size:13px;">🏆 0 ختمات</span>
               </div>
-              <input type="range" min="0" max="5" step="1" id="prayersRange" />
+              <div style="display:flex; gap:8px; margin-top:10px;">
+                <button class="btn primary" id="quranPlus">+ جزء</button>
+                <button class="btn" id="quranMinus">- جزء</button>
+                <button class="btn danger" id="quranReset">تصفير</button>
+              </div>
             </div>
+            <div style="height:12px"></div>
+            <div class="list" id="itemsList"></div>
+
+            <div style="height:12px"></div>
+
 
             <div style="height:12px"></div>
             <div class="scaleBox">
-              <div style="font-weight:900; margin-bottom:6px;">عمل خاص</div>
+              <div style="font-weight:1100; margin-bottom:6px;">عمل خاص</div>
               <div class="hint" style="margin-bottom:10px;">ملاحظة قصيرة لليوم (لا تدخل ضمن نسبة الإنجاز).</div>
               <textarea id="note" maxlength="140" placeholder="اكتب عملك الخاص هنا…"></textarea>
             </div>
@@ -917,13 +721,8 @@
         </section>
       </div>
 
-      <div class="footerNote">
-        <img
-          src="https://github.com/NaserNajeh/ramazan-myf/blob/main/374946672_289987087105699_6304014763515905168_n.jpg?raw=true"
-          alt="شعار الملتقى">
-        <span>مع تحيات - ملتقى الشباب المسلم - فلسطين</span>
-        <strong>2026م - 1447هـ</strong>
-      </div>
+      <div class="footerNote">مع تحيات - ملتقى الشباب المسلم - فلسطين • على iPhone: زر المشاركة → “إضافة إلى الشاشة
+        الرئيسية”. على Android: ⋮ → “تثبيت التطبيق”.</div>
     </div>
   </main>
 
@@ -935,16 +734,6 @@
     <div class="actions">
       <button class="miniBtn" id="installLater">لاحقًا</button>
       <button class="miniBtn ok" id="installNow">تثبيت</button>
-    </div>
-  </div>
-
-  <div id="pdfModal" class="modal">
-    <div class="modal-head">
-      <span style="font-weight:900;">زاد الذاكر</span>
-      <button class="close-btn" onclick="closeZad()">إغلاق ✕</button>
-    </div>
-    <div id="pdfContainer" class="pdf-container">
-      <div class="pdf-loading">📖 اضغط لفتح زاد الذاكر</div>
     </div>
   </div>
 
@@ -993,27 +782,39 @@
     const TEMPLATE = {
       days: 30,
       habits: [
-        { key: "morning_adhkar", label: "أذكار الصباح <a href=\"javascript:void(0)\" class=\"zad-link\" style=\"color:var(--gold); font-weight:900; text-decoration:none;\">(زاد الذاكر)</a>" },
-        { key: "duha_prayer", label: "صلاة الضحى" },
-        { key: "kinship", label: "صلة الرحم" },
-        { key: "quran_juz", label: "قراءة جزء من القرآن" },
-        { key: "sadaqah", label: "صدقة" },
-        { key: "dhikr_200", label: "الذكر 300 مرة ( 100 استغفار ، 100 تهليل ، 100 صلاة على النبي صلى الله عليه وسلم )" },
-        { key: "rawatib", label: "السنن الرواتب" },
-        { key: "dua", label: "الدعاء" },
-        { key: "evening_adhkar", label: "أذكار المساء <a href=\"javascript:void(0)\" class=\"zad-link\" style=\"color:var(--gold); font-weight:900; text-decoration:none;\">(زاد الذاكر)</a>" },
-        { key: "taraweeh", label: "صلاة التراويح" },
-        { key: "witr", label: "صلاة الوتر" },
-        { key: "surah_mulk", label: "قراءة سورة الملك" },
-        { key: "before_sleep_adhkar", label: "أذكار ما قبل النوم" }
+        { key: "fast_guard", label: "حفظ الصوم" },
+
+        { key: "dalail_khayrat", label: "دلائل الخيرات" },
+        { key: "taraweeh", label: "التراويح" },
+        { key: "tahajjud_2", label: "ركعتين تهجد قبل الفجر" },
+        { key: "duha_2", label: "ركعتي الضحى" },
+        { key: "awwabin", label: "صلاة الأوابين بعد المغرب" },
+        { key: "daily_wird", label: "الورد اليومي صباحا ومساء" },
+        { key: "fitr_sadaqah", label: "صدقة الفطر" }
       ]
     };
+
+
+    const QURAN_COUNTER_KEY = "ramadan_quran_counter_v1";
+    const KHATMA_COUNTER_KEY = "ramadan_khatma_counter_v1";
+    function loadQuranCounter() {
+      return Number(localStorage.getItem(QURAN_COUNTER_KEY) || 0);
+    }
+    function saveQuranCounter(val) {
+      localStorage.setItem(QURAN_COUNTER_KEY, val);
+    }
+    function loadKhatmaCounter() {
+      return Number(localStorage.getItem(KHATMA_COUNTER_KEY) || 0);
+    }
+    function saveKhatmaCounter(val) {
+      localStorage.setItem(KHATMA_COUNTER_KEY, val);
+    }
 
     const STORAGE_KEY = "ramadan_pwa_state_v1";
     const UI_KEY = "ramadan_pwa_ui_v1";
 
     function emptyDay() {
-      const day = { prayers: 0, note: "" };
+      const day = { note: "" };
       TEMPLATE.habits.forEach(h => day[h.key] = false);
       return day;
     }
@@ -1048,13 +849,9 @@
 
     function calcDayScore(dayData) {
       const totalBool = TEMPLATE.habits.length;
-      const doneBool = TEMPLATE.habits.reduce((a, h) => a + (dayData[h.key] ? 1 : 0), 0);
-      const prayersNorm = Math.max(0, Math.min(1, (Number(dayData.prayers || 0) / 5)));
-      const totalUnits = totalBool + 1;
-      const doneUnits = doneBool + prayersNorm;
-      const pct = Math.round((doneUnits / totalUnits) * 100);
-      const complete = (doneBool === totalBool) && (Number(dayData.prayers || 0) === 5);
-      const partial = (doneBool > 0) || (Number(dayData.prayers || 0) > 0);
+      const doneBool = TEMPLATE.habits.reduce((a, h) => a + (dayData[h.key] ? 1 : 0), 0); const totalUnits = totalBool;
+      const doneUnits = doneBool;
+      const pct = Math.round((doneUnits / totalUnits) * 100); const complete = (doneBool === totalBool); const partial = (doneBool > 0);
       return { pct, complete, partial, doneBool, totalBool };
     }
 
@@ -1064,17 +861,12 @@
     const el = {
       prevDay: document.getElementById("prevDay"),
       nextDay: document.getElementById("nextDay"),
-      itemsList: document.getElementById("itemsList"),
-      prayersRange: document.getElementById("prayersRange"),
-      prayersPill: document.getElementById("prayersPill"),
-      note: document.getElementById("note"),
+      itemsList: document.getElementById("itemsList"), note: document.getElementById("note"),
       markAll: document.getElementById("markAll"),
       clearDay: document.getElementById("clearDay"),
       resetAll: document.getElementById("resetAll"),
       statusBadge: document.getElementById("statusBadge"),
-      boolBadge: document.getElementById("boolBadge"),
-      prayersBadge: document.getElementById("prayersBadge"),
-      ramadanChip: document.getElementById("ramadanChip"),
+      boolBadge: document.getElementById("boolBadge"), ramadanChip: document.getElementById("ramadanChip"),
       gregChip: document.getElementById("gregChip"),
       scoreChip: document.getElementById("scoreChip"),
       dayTitle: document.getElementById("dayTitle"),
@@ -1100,121 +892,6 @@
       else { el.statusBadge.textContent = "غير مكتمل"; el.statusBadge.classList.add("miss"); }
     }
 
-    // Sanitize HTML labels — preserve class for event delegation
-    function sanitizeLabel(html) {
-      const tmp = document.createElement("div");
-      tmp.innerHTML = html;
-      const links = tmp.querySelectorAll("a");
-      links.forEach(a => {
-        const href = a.getAttribute("href");
-        const cls = a.getAttribute("class") || "";
-        const safeLink = document.createElement("a");
-        safeLink.href = cls.includes("zad-link") ? "javascript:void(0)" : (href || "#");
-        if (cls) safeLink.className = cls;
-        if (!cls.includes("zad-link")) { safeLink.target = "_blank"; safeLink.rel = "noopener"; }
-        safeLink.style.cssText = "color:var(--gold); font-weight:900; text-decoration:none; cursor:pointer;";
-        safeLink.textContent = a.textContent;
-        a.replaceWith(safeLink);
-      });
-      return tmp.innerHTML;
-    }
-
-    // PDF Viewer Logic (using PDF.js for cross-device support)
-    const PDF_LOCAL = "./zad.pdf";
-    const modal = document.getElementById("pdfModal");
-    const pdfContainer = document.getElementById("pdfContainer");
-    let pdfLoaded = false;
-
-    // Configure PDF.js worker
-    pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
-
-    async function openZad() {
-      modal.classList.add("open");
-
-      // Only load once
-      if (pdfLoaded) return;
-
-      pdfContainer.innerHTML = '<div class="pdf-loading">📖 جاري تحميل زاد الذاكر...</div>';
-
-      try {
-        const res = await fetch(PDF_LOCAL);
-        if (!res.ok) throw new Error("Not found");
-        const arrayBuf = await res.arrayBuffer();
-
-        // Cache for offline
-        if ('caches' in window) {
-          try {
-            const cache = await caches.open("zad-cache-v1");
-            cache.put("zad-pdf", new Response(arrayBuf.slice(0), { headers: { "Content-Type": "application/pdf" } }));
-          } catch (e) { }
-        }
-
-        // Render with PDF.js
-        const pdf = await pdfjsLib.getDocument({ data: arrayBuf }).promise;
-        pdfContainer.innerHTML = "";
-
-        const containerWidth = pdfContainer.clientWidth - 8;
-
-        for (let i = 1; i <= pdf.numPages; i++) {
-          const page = await pdf.getPage(i);
-          const baseViewport = page.getViewport({ scale: 1 });
-          const scale = Math.min(1.5, containerWidth / baseViewport.width);
-          const viewport = page.getViewport({ scale });
-
-          const canvas = document.createElement("canvas");
-          canvas.width = viewport.width;
-          canvas.height = viewport.height;
-
-          const ctx = canvas.getContext("2d");
-          await page.render({ canvasContext: ctx, viewport }).promise;
-          pdfContainer.appendChild(canvas);
-        }
-
-        pdfLoaded = true;
-      } catch (e) {
-        // Try from cache if fetch fails (offline)
-        try {
-          const cache = await caches.open("zad-cache-v1");
-          const cached = await cache.match("zad-pdf");
-          if (cached) {
-            const buf = await cached.arrayBuffer();
-            const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
-            pdfContainer.innerHTML = "";
-            const containerWidth = pdfContainer.clientWidth - 8;
-            for (let i = 1; i <= pdf.numPages; i++) {
-              const page = await pdf.getPage(i);
-              const baseViewport = page.getViewport({ scale: 1 });
-              const scale = Math.min(1.5, containerWidth / baseViewport.width);
-              const viewport = page.getViewport({ scale });
-              const canvas = document.createElement("canvas");
-              canvas.width = viewport.width;
-              canvas.height = viewport.height;
-              await page.render({ canvasContext: canvas.getContext("2d"), viewport }).promise;
-              pdfContainer.appendChild(canvas);
-            }
-            pdfLoaded = true;
-          } else {
-            throw new Error("No cache");
-          }
-        } catch (e2) {
-          pdfContainer.innerHTML = '<div class="pdf-loading" style="color:red;">❗ تعذر تحميل الملف</div>';
-        }
-      }
-    }
-
-    function closeZad() {
-      modal.classList.remove("open");
-    }
-
-    // Event delegation: catch all .zad-link clicks globally
-    document.addEventListener("click", (e) => {
-      const link = e.target.closest(".zad-link");
-      if (link) {
-        e.preventDefault();
-        openZad();
-      }
-    });
-
     function renderDay() {
       ui.currentDay = clampDay(ui.currentDay || 1);
       saveUI(ui);
@@ -1233,8 +910,6 @@
 
       setStatus(score);
       el.boolBadge.textContent = `${score.doneBool} / ${score.totalBool}`;
-      el.prayersBadge.textContent = `الصلاة: ${Number(dayData.prayers || 0)}/5`;
-
       el.prevDay.disabled = dayNum <= 1;
       el.nextDay.disabled = dayNum >= TEMPLATE.days;
 
@@ -1246,7 +921,7 @@
         const meta = document.createElement("div");
         meta.className = "meta";
         const lab = document.createElement("label");
-        lab.innerHTML = sanitizeLabel(h.label);
+        lab.innerHTML = h.label;
         const hint = document.createElement("div");
         hint.className = "hint";
         hint.textContent = "تأشير عند الإتمام";
@@ -1268,22 +943,6 @@
         wrap.appendChild(cb);
         el.itemsList.appendChild(wrap);
       });
-
-      el.prayersRange.value = Number(dayData.prayers || 0);
-      el.prayersPill.textContent = `${Number(dayData.prayers || 0)} / 5`;
-      el.prayersRange.oninput = () => {
-        dayData.prayers = Number(el.prayersRange.value);
-        el.prayersPill.textContent = `${dayData.prayers} / 5`;
-        saveState(state);
-        const sc = calcDayScore(dayData);
-        el.scoreChip.textContent = `${sc.pct}%`;
-        setStatus(sc);
-        el.boolBadge.textContent = `${sc.doneBool} / ${sc.totalBool}`;
-        el.prayersBadge.textContent = `الصلاة: ${dayData.prayers}/5`;
-        renderStats();
-        renderMonthTable();
-      };
-
       el.note.value = dayData.note || "";
       el.note.oninput = () => {
         dayData.note = el.note.value;
@@ -1295,15 +954,12 @@
     function renderStats() {
       let completed = 0, partial = 0, zero = 0;
       let avg = 0;
-      let prayersFull = 0;
-
       for (let d = 1; d <= TEMPLATE.days; d++) {
         const sc = calcDayScore(state[d]);
         avg += sc.pct;
         if (sc.complete) completed++;
         else if (sc.partial) partial++;
         else zero++;
-        if (Number(state[d].prayers || 0) === 5) prayersFull++;
       }
       avg = Math.round(avg / TEMPLATE.days);
 
@@ -1318,15 +974,13 @@
         <span class="badge ok">أيام مكتملة: ${completed}</span>
         <span class="badge warn">أيام جزئية: ${partial}</span>
         <span class="badge miss">أيام بلا إنجاز: ${zero}</span>
-        <span class="badge">متوسط: ${avg}%</span>
-        <span class="badge">اكتمال الصلاة (5/5): ${prayersFull} يوم</span>
-      </div>
+        <span class="badge">متوسط: ${avg}%</span>      </div>
       <div class="hint" style="margin-bottom:8px;">أكثر البنود التزامًا (عدد الأيام):</div>
       <div style="display:flex; flex-direction:column; gap:8px;">
         ${per.slice(0, 8).map(x => `
           <div class="item" style="padding:10px 12px;">
             <div class="meta">
-              <label>${stripHtml(x.label)}</label>
+              <label>${x.label}</label>
               <div class="hint">${x.count} / ${TEMPLATE.days}</div>
             </div>
             <span class="pill">${Math.round((x.count / TEMPLATE.days) * 100)}%</span>
@@ -1336,17 +990,10 @@
     `;
     }
 
-    // FIX #3: Strip HTML tags for clean text display in table and stats
-    function stripHtml(str) {
-      const tmp = document.createElement("div");
-      tmp.innerHTML = str;
-      return tmp.textContent || tmp.innerText || "";
-    }
-
     function renderMonthTable() {
       let thead = "<thead><tr><th>اليوم</th><th>التاريخ</th>";
-      TEMPLATE.habits.forEach(h => thead += `<th>${escapeHtml(stripHtml(h.label))}</th>`);
-      thead += "<th>الصلاة</th><th>الإنجاز</th></tr></thead>";
+      TEMPLATE.habits.forEach(h => thead += `<th>${escapeHtml(h.label)}</th>`);
+      thead += "<th>الإنجاز</th></tr></thead>";
 
       let tbody = "<tbody>";
       for (let d = 1; d <= TEMPLATE.days; d++) {
@@ -1360,9 +1007,7 @@
       `;
         TEMPLATE.habits.forEach(h => {
           tbody += `<td>${state[d][h.key] ? "✓" : ""}</td>`;
-        });
-        tbody += `<td>${Number(state[d].prayers || 0)}/5</td>`;
-        tbody += `<td><span class="badge ${cls}">${sc.pct}%</span></td></tr>`;
+        }); tbody += `<td><span class="badge ${cls}">${sc.pct}%</span></td></tr>`;
       }
       tbody += "</tbody>";
 
@@ -1405,11 +1050,50 @@
       renderDay(); renderStats(); renderMonthTable();
     });
 
-    ui.currentDay = clampDay(ui.currentDay || 1);
-    saveUI(ui);
+    // Quran Counter + Khatma Logic
+    const quranDisplay = document.getElementById("quranCountDisplay");
+    const quranPlus = document.getElementById("quranPlus");
+    const quranMinus = document.getElementById("quranMinus");
+    const quranReset = document.getElementById("quranReset");
+    const khatmaBadge = document.getElementById("khatmaBadge");
+
+    function renderQuranCounter() {
+      const val = Math.max(0, Math.min(30, loadQuranCounter()));
+      quranDisplay.textContent = val + " / 30";
+      const khatma = loadKhatmaCounter();
+      khatmaBadge.textContent = "🏆 " + khatma + (khatma === 1 ? " ختمة" : " ختمات");
+    }
+
+    quranPlus.onclick = () => {
+      let val = loadQuranCounter();
+      if (val < 30) {
+        val += 1;
+        saveQuranCounter(val);
+        if (val === 30) {
+          const k = loadKhatmaCounter() + 1;
+          saveKhatmaCounter(k);
+          saveQuranCounter(0);
+        }
+      }
+      renderQuranCounter();
+    };
+
+    quranMinus.onclick = () => {
+      let val = loadQuranCounter();
+      if (val > 0) { val -= 1; saveQuranCounter(val); }
+      renderQuranCounter();
+    };
+
+    quranReset.onclick = () => {
+      saveQuranCounter(0);
+      saveKhatmaCounter(0);
+      renderQuranCounter();
+    };
+
     renderDay();
     renderStats();
     renderMonthTable();
+    renderQuranCounter();
   </script>
 </body>
 
