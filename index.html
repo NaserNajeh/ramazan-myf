@@ -1,0 +1,1416 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>محاسبة رمضان</title>
+
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#110f33">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="محاسبة رمضان">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+  <style>
+    :root {
+      --bg1: #1a0b2e;
+      --bg2: #110f33;
+      --glass: rgba(255, 255, 255, .08);
+      --glass2: rgba(255, 255, 255, .12);
+      --stroke: rgba(255, 255, 255, .15);
+      --text: #ffffff;
+      --muted: rgba(255, 255, 255, .65);
+      --gold: #ffb703;
+      --mint: #00f5d4;
+      --shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
+      --radius: 20px;
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    html,
+    body {
+      height: 100%
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Tajawal', system-ui, -apple-system, sans-serif;
+      background: #110f33;
+      color: var(--text);
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* نجوم الخلفية */
+    .stars {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background-image:
+        radial-gradient(1px 1px at 10% 10%, white 100%, transparent),
+        radial-gradient(1px 1px at 20% 40%, white 100%, transparent),
+        radial-gradient(2px 2px at 30% 70%, rgba(255, 255, 255, .5) 100%, transparent),
+        radial-gradient(1px 1px at 40% 20%, white 100%, transparent),
+        radial-gradient(1.5px 1.5px at 50% 50%, white 100%, transparent),
+        radial-gradient(1px 1px at 60% 80%, white 100%, transparent),
+        radial-gradient(2px 2px at 70% 30%, rgba(255, 255, 255, .6) 100%, transparent),
+        radial-gradient(1px 1px at 80% 10%, white 100%, transparent),
+        radial-gradient(1px 1px at 90% 60%, white 100%, transparent);
+      background-size: 500px 500px;
+      opacity: 0.4;
+      animation: twinkle 5s linear infinite alternate;
+    }
+
+    @keyframes twinkle {
+      from {
+        opacity: 0.3;
+        transform: translateY(0);
+      }
+
+      to {
+        opacity: 0.6;
+        transform: translateY(-20px);
+      }
+    }
+
+    /* هالة ملونة */
+    .glow-layer {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background:
+        radial-gradient(circle at 10% 10%, rgba(255, 183, 3, 0.15), transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(0, 245, 212, 0.12), transparent 40%);
+      filter: blur(40px);
+    }
+
+    /* فوانيس رمضان */
+    .lanterns-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1;
+      pointer-events: none;
+      display: flex;
+      justify-content: space-between;
+      padding: 0 5vw;
+    }
+
+    .lantern {
+      width: 40px;
+      height: auto;
+      transform-origin: top center;
+      animation: swing 3s ease-in-out infinite alternate;
+      filter: drop-shadow(0 0 10px rgba(255, 183, 3, 0.6));
+    }
+
+    .lantern.l2 {
+      width: 55px;
+      animation-duration: 4s;
+      animation-delay: -1s;
+      margin-top: -10px;
+    }
+
+    .lantern.l3 {
+      width: 35px;
+      animation-duration: 3.5s;
+      animation-delay: -2s;
+      margin-top: 15px;
+    }
+
+    @keyframes swing {
+      0% {
+        transform: rotate(3deg);
+      }
+
+      100% {
+        transform: rotate(-3deg);
+      }
+    }
+
+    /* Lanterns */
+    .lanterns-container {
+      position: fixed;
+      top: -10px;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      pointer-events: none;
+      display: flex;
+      justify-content: space-between;
+      padding: 0 2vw;
+      filter: drop-shadow(0 5px 15px rgba(255, 183, 3, 0.3));
+    }
+
+    .lantern {
+      width: 70px;
+      height: auto;
+      transform-origin: 50% 0;
+      animation: swing 3.5s ease-in-out infinite alternate;
+    }
+
+    .lantern.l2 {
+      width: 100px;
+      animation-duration: 4.5s;
+      animation-delay: -1.5s;
+      margin-top: -5px;
+    }
+
+    .lantern.l3 {
+      width: 65px;
+      animation-duration: 4s;
+      animation-delay: -2.5s;
+      margin-top: 15px;
+    }
+
+    @keyframes swing {
+      0% {
+        transform: rotate(5deg);
+      }
+
+      100% {
+        transform: rotate(-5deg);
+      }
+    }
+
+    /* زخرفة إسلامية */
+    .ornament-bg {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .07;
+      z-index: 1;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path d="M50 0 L100 50 L50 100 L0 50 Z" fill="none" stroke="%23ffb703" stroke-width="1"/></svg>');
+      background-size: 60px 60px;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      padding: 14px 12px 12px;
+      backdrop-filter: blur(20px);
+      background: rgba(17, 15, 51, 0.6);
+      border-bottom: 1px solid var(--stroke);
+    }
+
+    .wrap {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 0 10px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.2;
+    }
+
+    .brand .sub {
+      margin-top: 2px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .chips {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .chip {
+      background: rgba(255, 255, 255, .05);
+      border: 1px solid rgba(255, 255, 255, .1);
+    }
+
+    .chip.gold {
+      background: rgba(255, 183, 3, .15);
+      border-color: rgba(255, 183, 3, .4);
+      color: #ffda75;
+    }
+
+    .chip.mint {
+      background: rgba(0, 245, 212, .15);
+      border-color: rgba(0, 245, 212, .4);
+      color: #7dfce8;
+    }
+
+    .icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: rgba(216, 179, 90, .14);
+      border: 1px solid rgba(216, 179, 90, .24);
+      box-shadow: 0 12px 26px rgba(0, 0, 0, .18);
+      overflow: hidden;
+    }
+
+    .icon img {
+      width: 28px;
+      height: 28px;
+      border-radius: 10px;
+    }
+
+    main {
+      padding: 14px 0 28px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    @media (min-width: 860px) {
+      .grid {
+        grid-template-columns: 1.1fr .9fr;
+        align-items: start;
+      }
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      backdrop-filter: blur(20px);
+    }
+
+    .cardHead {
+      padding: 15px;
+      background: linear-gradient(90deg, rgba(255, 183, 3, 0.1), rgba(0, 245, 212, 0.05));
+      border-bottom: 1px solid var(--stroke);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .cardHead::before {
+      content: "✦";
+      color: var(--gold);
+      font-size: 18px;
+    }
+
+    .cardHead h2 {
+      margin: 0;
+      font-size: 14px;
+    }
+
+    .cardBody {
+      padding: 12px;
+    }
+
+    .navRow {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr 1fr;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn {
+      border: 1px solid var(--stroke);
+      background: rgba(255, 255, 255, 0.05);
+      padding: 12px 16px;
+      border-radius: 16px;
+      font-weight: 700;
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .btn.primary {
+      background: linear-gradient(135deg, rgba(0, 245, 212, 0.2), rgba(0, 245, 212, 0.05));
+      border-color: rgba(0, 245, 212, 0.4);
+      color: #00f5d4;
+      text-shadow: 0 0 15px rgba(0, 245, 212, 0.5);
+    }
+
+    .btn.primary:hover {
+      background: linear-gradient(135deg, rgba(0, 245, 212, 0.3), rgba(0, 245, 212, 0.1));
+      box-shadow: 0 0 20px rgba(0, 245, 212, 0.2);
+    }
+
+    .btn.danger {
+      background: linear-gradient(135deg, rgba(255, 50, 50, 0.2), rgba(255, 50, 50, 0.05));
+      border-color: rgba(255, 50, 50, 0.4);
+      color: #ff6b6b;
+    }
+
+    .btn:disabled {
+      opacity: .45;
+      cursor: not-allowed;
+    }
+
+    .centerInfo {
+      padding: 10px 10px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, .18);
+      background: linear-gradient(135deg, rgba(255, 255, 255, .12), rgba(255, 255, 255, .06));
+      text-align: center;
+      backdrop-filter: blur(12px);
+    }
+
+    .centerInfo .d1 {
+      font-weight: 900;
+      font-size: 14px;
+    }
+
+    .centerInfo .d2 {
+      margin-top: 4px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .badges {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 900;
+      border: 1px solid rgba(255, 255, 255, .18);
+      background: rgba(255, 255, 255, .10);
+      color: #fff;
+    }
+
+    .badge.ok {
+      background: rgba(31, 191, 154, .12);
+      border-color: rgba(31, 191, 154, .24);
+    }
+
+    .badge.warn {
+      background: rgba(216, 179, 90, .14);
+      border-color: rgba(216, 179, 90, .28);
+    }
+
+    .badge.miss {
+      background: rgba(0, 0, 0, .12);
+      border-color: rgba(255, 255, 255, .16);
+    }
+
+    .list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.03);
+      transition: background 0.2s;
+    }
+
+    .item:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .item .meta {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .item label {
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .hint {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    input[type="checkbox"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 24px;
+      height: 24px;
+      border: 2px solid var(--stroke);
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.3);
+      cursor: pointer;
+      position: relative;
+      transition: all 0.2s ease;
+    }
+
+    input[type="checkbox"]:checked {
+      background: var(--mint);
+      border-color: var(--mint);
+      box-shadow: 0 0 10px rgba(0, 245, 212, 0.4);
+    }
+
+    input[type="checkbox"]:checked::after {
+      content: "✔";
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      color: #000;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .scaleBox {
+      padding: 12px 12px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, .16);
+      background: linear-gradient(135deg, rgba(255, 255, 255, .12), rgba(255, 255, 255, .06));
+      backdrop-filter: blur(12px);
+    }
+
+    .scaleTop {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-weight: 900;
+      font-size: 12px;
+      background: rgba(255, 255, 255, .10);
+      border: 1px solid rgba(255, 255, 255, .16);
+    }
+
+    input[type="range"] {
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 80px;
+      resize: vertical;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, .16);
+      padding: 12px;
+      font-size: 13px;
+      background: rgba(0, 0, 0, .10);
+      color: #fff;
+      outline: none;
+      backdrop-filter: blur(10px);
+    }
+
+    textarea::placeholder {
+      color: rgba(255, 255, 255, .65);
+    }
+
+    textarea:focus {
+      border-color: rgba(31, 191, 154, .45);
+      box-shadow: 0 0 0 4px rgba(31, 191, 154, .12);
+    }
+
+    details summary {
+      cursor: pointer;
+      list-style: none;
+      user-select: none;
+      padding: 12px 12px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, .16);
+      background: linear-gradient(135deg, rgba(255, 255, 255, .12), rgba(255, 255, 255, .06));
+      font-weight: 900;
+    }
+
+    details summary::-webkit-details-marker {
+      display: none;
+    }
+
+    details .inside {
+      padding: 10px 4px 0;
+    }
+
+    .tableWrap {
+      overflow: auto;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, .16);
+      background: rgba(0, 0, 0, .10);
+      backdrop-filter: blur(10px);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 980px;
+      color: #fff;
+    }
+
+    th,
+    td {
+      border: 1px solid rgba(255, 255, 255, .10);
+      padding: 8px;
+      font-size: 12px;
+      text-align: center;
+    }
+
+    th {
+      background: linear-gradient(180deg, rgba(255, 183, 3, 0.15), rgba(255, 183, 3, 0.05));
+      color: var(--gold);
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      font-weight: 900;
+      border-bottom: 1px solid var(--gold);
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .footerNote {
+      text-align: center;
+      color: rgba(255, 255, 255, .72);
+      font-size: 11px;
+      margin-top: 12px;
+    }
+
+    .installBar {
+      position: fixed;
+      left: 10px;
+      right: 10px;
+      bottom: 10px;
+      z-index: 9999;
+      display: none;
+      gap: 10px;
+      align-items: center;
+      padding: 12px 12px;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, .18);
+      background: linear-gradient(135deg, rgba(255, 255, 255, .14), rgba(255, 255, 255, .08));
+      backdrop-filter: blur(16px);
+      box-shadow: 0 22px 60px rgba(0, 0, 0, .35);
+    }
+
+    .installBar .txt {
+      flex: 1;
+      min-width: 160px;
+    }
+
+    .installBar .t1 {
+      font-weight: 900;
+      font-size: 13px;
+    }
+
+    .installBar .t2 {
+      margin-top: 2px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .installBar .actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .installBar .miniBtn {
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, .18);
+      background: rgba(0, 0, 0, .12);
+      color: #fff;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .installBar .miniBtn.ok {
+      background: linear-gradient(135deg, rgba(31, 191, 154, .22), rgba(11, 93, 74, .22));
+      border-color: rgba(31, 191, 154, .28);
+    }
+
+    /* PDF Modal */
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      background: rgba(0, 0, 0, .85);
+      backdrop-filter: blur(10px);
+      display: none;
+      flex-direction: column;
+      animation: fadeIn .2s ease;
+    }
+
+    .modal.open {
+      display: flex;
+    }
+
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      background: var(--bg2);
+      border-bottom: 1px solid var(--stroke);
+      color: #fff;
+    }
+
+    .footerNote {
+      text-align: center;
+      color: var(--muted);
+      font-size: 11px;
+      margin-top: 30px;
+      margin-bottom: 40px;
+      opacity: 0.8;
+      font-weight: 500;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .footerNote img {
+      width: 80px;
+      height: auto;
+      border-radius: 50%;
+      box-shadow: 0 0 20px rgba(255, 183, 3, 0.3);
+      border: 2px solid rgba(255, 183, 3, 0.3);
+    }
+
+    .footerNote strong {
+      font-weight: 900;
+      color: var(--gold);
+      font-size: 13px;
+    }
+
+    .pdf-container {
+      flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      background: #e8e8e8;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 0;
+    }
+
+    .pdf-container canvas {
+      max-width: 100%;
+      height: auto !important;
+      display: block;
+    }
+
+    .pdf-loading {
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      font-family: 'Tajawal', sans-serif;
+      font-size: 18px;
+    }
+
+    .close-btn {
+      background: rgba(0, 0, 0, .2);
+      border: 1px solid rgba(255, 255, 255, .2);
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="stars"></div>
+  <div class="glow-layer"></div>
+  <div class="ornament-bg"></div>
+
+  <div class="lanterns-container">
+    <!-- Lantern 1: Hex Fanoos -->
+    <svg class="lantern l1" viewBox="0 0 100 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M50 0 L50 30" stroke="#ffb703" stroke-width="2" />
+      <path d="M50 30 L25 50 L75 50 Z" fill="#ffb703" opacity="0.9" />
+      <path d="M25 50 L15 110 L85 110 L75 50 Z" fill="rgba(255,183,3,0.15)" stroke="#ffb703" stroke-width="1.5" />
+      <path d="M40 70 L60 70 L50 90 Z" fill="#ffb703" opacity="0.7" />
+      <path d="M15 110 L50 150 L85 110 Z" fill="#ffb703" opacity="0.9" />
+      <circle cx="50" cy="150" r="4" fill="#ffb703" />
+    </svg>
+
+    <!-- Lantern 2: Crescent Dome -->
+    <svg class="lantern l2" viewBox="0 0 120 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M60 0 L60 40" stroke="#ffb703" stroke-width="2" />
+      <circle cx="60" cy="40" r="4" fill="#ffb703" />
+      <path d="M60 44 L30 70 L90 70 Z" fill="#ffb703" opacity="0.9" />
+      <rect x="30" y="70" width="60" height="80" rx="30" stroke="#ffb703" stroke-width="1.5"
+        fill="rgba(255,183,3,0.1)" />
+      <path d="M60 85 L45 105 L75 105 Z" fill="#ffb703" opacity="0.6" />
+      <path d="M60 135 L45 115 L75 115 Z" fill="#ffb703" opacity="0.6" />
+      <path d="M45 150 L60 170 L75 150 Z" fill="#ffb703" opacity="0.9" />
+      <circle cx="60" cy="170" r="5" fill="#ffb703" />
+    </svg>
+
+    <!-- Lantern 3: Tear Drop -->
+    <svg class="lantern l3" viewBox="0 0 100 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M50 0 L50 25" stroke="#ffb703" stroke-width="2" />
+      <circle cx="50" cy="25" r="3" fill="#ffb703" />
+      <path d="M50 28 L30 50 L70 50 Z" fill="#ffb703" opacity="0.9" />
+      <path d="M30 50 L20 100 L80 100 L70 50 Z" fill="rgba(255,183,3,0.15)" stroke="#ffb703" stroke-width="1.5" />
+      <path d="M20 100 L50 140 L80 100 Z" fill="#ffb703" opacity="0.9" />
+      <circle cx="50" cy="140" r="4" fill="#ffb703" />
+    </svg>
+  </div>
+
+  <header>
+    <div class="wrap">
+      <div class="topbar">
+        <div class="brand">
+          <div class="icon" aria-hidden="true"><img src="./icon-192.png" alt="رمضان"></div>
+          <div>
+            <h1>محاسبة رمضان</h1>
+            <div class="sub">جدول تفاعلي • حفظ تلقائي • يعمل دون إنترنت</div>
+          </div>
+        </div>
+        <div class="chips">
+          <span class="chip gold" id="ramadanChip">1 رمضان</span>
+          <span class="chip" id="gregChip">الأربعاء 18/2/2026</span>
+          <span class="chip mint" id="scoreChip">0%</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap">
+      <div class="grid">
+        <section class="card">
+          <div class="cardHead">
+            <h2>بنود اليوم</h2>
+          </div>
+          <div class="cardBody">
+            <div class="navRow">
+              <button class="btn" id="prevDay">اليوم السابق</button>
+              <div class="centerInfo">
+                <div class="d1" id="dayTitle">اليوم 1 رمضان</div>
+                <div class="d2" id="dayDate">الأربعاء 18/2/2026</div>
+                <div class="badges">
+                  <span class="badge miss" id="statusBadge">غير مكتمل</span>
+                  <span class="badge" id="boolBadge">0 / 13</span>
+                  <span class="badge" id="prayersBadge">الصلاة: 0/5</span>
+                </div>
+              </div>
+              <button class="btn" id="nextDay">اليوم التالي</button>
+            </div>
+
+            <div style="height:10px"></div>
+            <div class="list" id="itemsList"></div>
+
+            <div style="height:12px"></div>
+            <div class="scaleBox">
+              <div class="scaleTop">
+                <div style="display:flex; flex-direction:column; gap:3px;">
+                  <div style="font-weight:900;">الصلاة على وقتها / 5</div>
+                  <div class="hint">اختر عدد الصلوات الخمس في وقتها لهذا اليوم.</div>
+                </div>
+                <span class="pill" id="prayersPill">0 / 5</span>
+              </div>
+              <input type="range" min="0" max="5" step="1" id="prayersRange" />
+            </div>
+
+            <div style="height:12px"></div>
+            <div class="scaleBox">
+              <div style="font-weight:900; margin-bottom:6px;">عمل خاص</div>
+              <div class="hint" style="margin-bottom:10px;">ملاحظة قصيرة لليوم (لا تدخل ضمن نسبة الإنجاز).</div>
+              <textarea id="note" maxlength="140" placeholder="اكتب عملك الخاص هنا…"></textarea>
+            </div>
+
+            <div style="height:12px"></div>
+            <div class="navRow" style="grid-template-columns: 1fr 1fr 1fr;">
+              <button class="btn primary" id="markAll">تأشير كل البنود</button>
+              <button class="btn" id="clearDay">مسح اليوم</button>
+              <button class="btn danger" id="resetAll">إعادة ضبط الشهر</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="cardHead">
+            <h2>متابعة الشهر</h2>
+          </div>
+          <div class="cardBody">
+            <details open>
+              <summary>إحصاءات سريعة</summary>
+              <div class="inside" id="statsBox"></div>
+            </details>
+            <div style="height:10px"></div>
+            <details>
+              <summary>جدول الشهر (30 يوم)</summary>
+              <div class="inside">
+                <div class="tableWrap">
+                  <table id="monthTable"></table>
+                </div>
+                <div class="hint" style="margin-top:8px;">مرّر أفقيًا لمشاهدة كل الأعمدة.</div>
+              </div>
+            </details>
+          </div>
+        </section>
+      </div>
+
+      <div class="footerNote">
+        <img
+          src="https://github.com/NaserNajeh/ramazan-myf/blob/main/374946672_289987087105699_6304014763515905168_n.jpg?raw=true"
+          alt="شعار الملتقى">
+        <span>مع تحيات - ملتقى الشباب المسلم - فلسطين</span>
+        <strong>2026م - 1447هـ</strong>
+      </div>
+    </div>
+  </main>
+
+  <div class="installBar" id="installBar">
+    <div class="txt">
+      <div class="t1">ثبّت التطبيق على الشاشة الرئيسية</div>
+      <div class="t2">يفتح كتطبيق مستقل ويعمل دون إنترنت.</div>
+    </div>
+    <div class="actions">
+      <button class="miniBtn" id="installLater">لاحقًا</button>
+      <button class="miniBtn ok" id="installNow">تثبيت</button>
+    </div>
+  </div>
+
+  <div id="pdfModal" class="modal">
+    <div class="modal-head">
+      <span style="font-weight:900;">زاد الذاكر</span>
+      <button class="close-btn" onclick="closeZad()">إغلاق ✕</button>
+    </div>
+    <div id="pdfContainer" class="pdf-container">
+      <div class="pdf-loading">📖 اضغط لفتح زاد الذاكر</div>
+    </div>
+  </div>
+
+  <script>
+    // PWA: Service Worker
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", async () => {
+        try { await navigator.serviceWorker.register("./sw.js"); } catch (e) { }
+      });
+    }
+
+    // Install prompt (Android Chrome)
+    let deferredPrompt = null;
+    const installBar = document.getElementById("installBar");
+    const installNow = document.getElementById("installNow");
+    const installLater = document.getElementById("installLater");
+
+    window.addEventListener("beforeinstallprompt", (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installBar.style.display = "flex";
+    });
+
+    installLater.addEventListener("click", () => { installBar.style.display = "none"; });
+    installNow.addEventListener("click", async () => {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      try { await deferredPrompt.userChoice; } catch (e) { }
+      deferredPrompt = null;
+      installBar.style.display = "none";
+    });
+
+    // Dates
+    const PRESET_DATES = ["2026-02-18", "2026-02-19", "2026-02-20", "2026-02-21", "2026-02-22", "2026-02-23", "2026-02-24", "2026-02-25", "2026-02-26", "2026-02-27", "2026-02-28", "2026-03-01", "2026-03-02", "2026-03-03", "2026-03-04", "2026-03-05", "2026-03-06", "2026-03-07", "2026-03-08", "2026-03-09", "2026-03-10", "2026-03-11", "2026-03-12", "2026-03-13", "2026-03-14", "2026-03-15", "2026-03-16", "2026-03-17", "2026-03-18", "2026-03-19"];
+
+    function formatArabicWeekday(d) {
+      return new Intl.DateTimeFormat('ar', { weekday: 'long' }).format(d);
+    }
+    function formatArabicDate(d) {
+      const day = d.getDate();
+      const month = d.getMonth() + 1;
+      const year = d.getFullYear();
+      return `${day}/${month}/${year}`;
+    }
+
+    const TEMPLATE = {
+      days: 30,
+      habits: [
+        { key: "morning_adhkar", label: "أذكار الصباح <a href=\"javascript:void(0)\" class=\"zad-link\" style=\"color:var(--gold); font-weight:900; text-decoration:none;\">(زاد الذاكر)</a>" },
+        { key: "duha_prayer", label: "صلاة الضحى" },
+        { key: "kinship", label: "صلة الرحم" },
+        { key: "quran_juz", label: "قراءة جزء من القرآن" },
+        { key: "sadaqah", label: "صدقة" },
+        { key: "dhikr_200", label: "الذكر 300 مرة ( 100 استغفار ، 100 تهليل ، 100 صلاة على النبي صلى الله عليه وسلم )" },
+        { key: "rawatib", label: "السنن الرواتب" },
+        { key: "dua", label: "الدعاء" },
+        { key: "evening_adhkar", label: "أذكار المساء <a href=\"javascript:void(0)\" class=\"zad-link\" style=\"color:var(--gold); font-weight:900; text-decoration:none;\">(زاد الذاكر)</a>" },
+        { key: "taraweeh", label: "صلاة التراويح" },
+        { key: "witr", label: "صلاة الوتر" },
+        { key: "surah_mulk", label: "قراءة سورة الملك" },
+        { key: "before_sleep_adhkar", label: "أذكار ما قبل النوم" }
+      ]
+    };
+
+    const STORAGE_KEY = "ramadan_pwa_state_v1";
+    const UI_KEY = "ramadan_pwa_ui_v1";
+
+    function emptyDay() {
+      const day = { prayers: 0, note: "" };
+      TEMPLATE.habits.forEach(h => day[h.key] = false);
+      return day;
+    }
+
+    function loadState() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) {
+        const init = {};
+        for (let d = 1; d <= TEMPLATE.days; d++) init[d] = emptyDay();
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(init));
+        return init;
+      }
+      try {
+        const st = JSON.parse(raw);
+        for (let d = 1; d <= TEMPLATE.days; d++) if (!st[d]) st[d] = emptyDay();
+        return st;
+      } catch (e) {
+        const init = {};
+        for (let d = 1; d <= TEMPLATE.days; d++) init[d] = emptyDay();
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(init));
+        return init;
+      }
+    }
+    function saveState(st) { localStorage.setItem(STORAGE_KEY, JSON.stringify(st)); }
+
+    function loadUI() {
+      const raw = localStorage.getItem(UI_KEY);
+      if (!raw) return { currentDay: 1 };
+      try { return JSON.parse(raw); } catch (e) { return { currentDay: 1 }; }
+    }
+    function saveUI(ui) { localStorage.setItem(UI_KEY, JSON.stringify(ui)); }
+
+    function calcDayScore(dayData) {
+      const totalBool = TEMPLATE.habits.length;
+      const doneBool = TEMPLATE.habits.reduce((a, h) => a + (dayData[h.key] ? 1 : 0), 0);
+      const prayersNorm = Math.max(0, Math.min(1, (Number(dayData.prayers || 0) / 5)));
+      const totalUnits = totalBool + 1;
+      const doneUnits = doneBool + prayersNorm;
+      const pct = Math.round((doneUnits / totalUnits) * 100);
+      const complete = (doneBool === totalBool) && (Number(dayData.prayers || 0) === 5);
+      const partial = (doneBool > 0) || (Number(dayData.prayers || 0) > 0);
+      return { pct, complete, partial, doneBool, totalBool };
+    }
+
+    const state = loadState();
+    const ui = loadUI();
+
+    const el = {
+      prevDay: document.getElementById("prevDay"),
+      nextDay: document.getElementById("nextDay"),
+      itemsList: document.getElementById("itemsList"),
+      prayersRange: document.getElementById("prayersRange"),
+      prayersPill: document.getElementById("prayersPill"),
+      note: document.getElementById("note"),
+      markAll: document.getElementById("markAll"),
+      clearDay: document.getElementById("clearDay"),
+      resetAll: document.getElementById("resetAll"),
+      statusBadge: document.getElementById("statusBadge"),
+      boolBadge: document.getElementById("boolBadge"),
+      prayersBadge: document.getElementById("prayersBadge"),
+      ramadanChip: document.getElementById("ramadanChip"),
+      gregChip: document.getElementById("gregChip"),
+      scoreChip: document.getElementById("scoreChip"),
+      dayTitle: document.getElementById("dayTitle"),
+      dayDate: document.getElementById("dayDate"),
+      statsBox: document.getElementById("statsBox"),
+      monthTable: document.getElementById("monthTable")
+    };
+
+    function clampDay(n) { return Math.max(1, Math.min(TEMPLATE.days, n)); }
+
+    function getDayDate(dayNum) {
+      const iso = PRESET_DATES[dayNum - 1];
+      const d = new Date(iso + "T00:00:00");
+      const weekday = formatArabicWeekday(d);
+      const dmy = formatArabicDate(d);
+      return { iso, d, weekday, dmy };
+    }
+
+    function setStatus(score) {
+      el.statusBadge.className = "badge";
+      if (score.complete) { el.statusBadge.textContent = "مكتمل"; el.statusBadge.classList.add("ok"); }
+      else if (score.partial) { el.statusBadge.textContent = "جزئي"; el.statusBadge.classList.add("warn"); }
+      else { el.statusBadge.textContent = "غير مكتمل"; el.statusBadge.classList.add("miss"); }
+    }
+
+    // Sanitize HTML labels — preserve class for event delegation
+    function sanitizeLabel(html) {
+      const tmp = document.createElement("div");
+      tmp.innerHTML = html;
+      const links = tmp.querySelectorAll("a");
+      links.forEach(a => {
+        const href = a.getAttribute("href");
+        const cls = a.getAttribute("class") || "";
+        const safeLink = document.createElement("a");
+        safeLink.href = cls.includes("zad-link") ? "javascript:void(0)" : (href || "#");
+        if (cls) safeLink.className = cls;
+        if (!cls.includes("zad-link")) { safeLink.target = "_blank"; safeLink.rel = "noopener"; }
+        safeLink.style.cssText = "color:var(--gold); font-weight:900; text-decoration:none; cursor:pointer;";
+        safeLink.textContent = a.textContent;
+        a.replaceWith(safeLink);
+      });
+      return tmp.innerHTML;
+    }
+
+    // PDF Viewer Logic (using PDF.js for cross-device support)
+    const PDF_LOCAL = "./zad.pdf";
+    const modal = document.getElementById("pdfModal");
+    const pdfContainer = document.getElementById("pdfContainer");
+    let pdfLoaded = false;
+
+    // Configure PDF.js worker
+    pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
+    async function openZad() {
+      modal.classList.add("open");
+
+      // Only load once
+      if (pdfLoaded) return;
+
+      pdfContainer.innerHTML = '<div class="pdf-loading">📖 جاري تحميل زاد الذاكر...</div>';
+
+      try {
+        const res = await fetch(PDF_LOCAL);
+        if (!res.ok) throw new Error("Not found");
+        const arrayBuf = await res.arrayBuffer();
+
+        // Cache for offline
+        if ('caches' in window) {
+          try {
+            const cache = await caches.open("zad-cache-v1");
+            cache.put("zad-pdf", new Response(arrayBuf.slice(0), { headers: { "Content-Type": "application/pdf" } }));
+          } catch (e) { }
+        }
+
+        // Render with PDF.js
+        const pdf = await pdfjsLib.getDocument({ data: arrayBuf }).promise;
+        pdfContainer.innerHTML = "";
+
+        const containerWidth = pdfContainer.clientWidth - 8;
+
+        for (let i = 1; i <= pdf.numPages; i++) {
+          const page = await pdf.getPage(i);
+          const baseViewport = page.getViewport({ scale: 1 });
+          const scale = Math.min(1.5, containerWidth / baseViewport.width);
+          const viewport = page.getViewport({ scale });
+
+          const canvas = document.createElement("canvas");
+          canvas.width = viewport.width;
+          canvas.height = viewport.height;
+
+          const ctx = canvas.getContext("2d");
+          await page.render({ canvasContext: ctx, viewport }).promise;
+          pdfContainer.appendChild(canvas);
+        }
+
+        pdfLoaded = true;
+      } catch (e) {
+        // Try from cache if fetch fails (offline)
+        try {
+          const cache = await caches.open("zad-cache-v1");
+          const cached = await cache.match("zad-pdf");
+          if (cached) {
+            const buf = await cached.arrayBuffer();
+            const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
+            pdfContainer.innerHTML = "";
+            const containerWidth = pdfContainer.clientWidth - 8;
+            for (let i = 1; i <= pdf.numPages; i++) {
+              const page = await pdf.getPage(i);
+              const baseViewport = page.getViewport({ scale: 1 });
+              const scale = Math.min(1.5, containerWidth / baseViewport.width);
+              const viewport = page.getViewport({ scale });
+              const canvas = document.createElement("canvas");
+              canvas.width = viewport.width;
+              canvas.height = viewport.height;
+              await page.render({ canvasContext: canvas.getContext("2d"), viewport }).promise;
+              pdfContainer.appendChild(canvas);
+            }
+            pdfLoaded = true;
+          } else {
+            throw new Error("No cache");
+          }
+        } catch (e2) {
+          pdfContainer.innerHTML = '<div class="pdf-loading" style="color:red;">❗ تعذر تحميل الملف</div>';
+        }
+      }
+    }
+
+    function closeZad() {
+      modal.classList.remove("open");
+    }
+
+    // Event delegation: catch all .zad-link clicks globally
+    document.addEventListener("click", (e) => {
+      const link = e.target.closest(".zad-link");
+      if (link) {
+        e.preventDefault();
+        openZad();
+      }
+    });
+
+    function renderDay() {
+      ui.currentDay = clampDay(ui.currentDay || 1);
+      saveUI(ui);
+
+      const dayNum = ui.currentDay;
+      const dayData = state[dayNum];
+      const score = calcDayScore(dayData);
+      const dd = getDayDate(dayNum);
+
+      el.ramadanChip.textContent = `${dayNum} رمضان`;
+      el.gregChip.textContent = `${dd.weekday} ${dd.dmy}`;
+      el.scoreChip.textContent = `${score.pct}%`;
+
+      el.dayTitle.textContent = `اليوم ${dayNum} رمضان`;
+      el.dayDate.textContent = `${dd.weekday} • ${dd.dmy}`;
+
+      setStatus(score);
+      el.boolBadge.textContent = `${score.doneBool} / ${score.totalBool}`;
+      el.prayersBadge.textContent = `الصلاة: ${Number(dayData.prayers || 0)}/5`;
+
+      el.prevDay.disabled = dayNum <= 1;
+      el.nextDay.disabled = dayNum >= TEMPLATE.days;
+
+      el.itemsList.innerHTML = "";
+      TEMPLATE.habits.forEach(h => {
+        const wrap = document.createElement("div");
+        wrap.className = "item";
+
+        const meta = document.createElement("div");
+        meta.className = "meta";
+        const lab = document.createElement("label");
+        lab.innerHTML = sanitizeLabel(h.label);
+        const hint = document.createElement("div");
+        hint.className = "hint";
+        hint.textContent = "تأشير عند الإتمام";
+        meta.appendChild(lab);
+        meta.appendChild(hint);
+
+        const cb = document.createElement("input");
+        cb.type = "checkbox";
+        cb.checked = !!dayData[h.key];
+        cb.addEventListener("change", () => {
+          dayData[h.key] = cb.checked;
+          saveState(state);
+          renderDay();
+          renderStats();
+          renderMonthTable();
+        });
+
+        wrap.appendChild(meta);
+        wrap.appendChild(cb);
+        el.itemsList.appendChild(wrap);
+      });
+
+      el.prayersRange.value = Number(dayData.prayers || 0);
+      el.prayersPill.textContent = `${Number(dayData.prayers || 0)} / 5`;
+      el.prayersRange.oninput = () => {
+        dayData.prayers = Number(el.prayersRange.value);
+        el.prayersPill.textContent = `${dayData.prayers} / 5`;
+        saveState(state);
+        const sc = calcDayScore(dayData);
+        el.scoreChip.textContent = `${sc.pct}%`;
+        setStatus(sc);
+        el.boolBadge.textContent = `${sc.doneBool} / ${sc.totalBool}`;
+        el.prayersBadge.textContent = `الصلاة: ${dayData.prayers}/5`;
+        renderStats();
+        renderMonthTable();
+      };
+
+      el.note.value = dayData.note || "";
+      el.note.oninput = () => {
+        dayData.note = el.note.value;
+        saveState(state);
+        renderMonthTable();
+      };
+    }
+
+    function renderStats() {
+      let completed = 0, partial = 0, zero = 0;
+      let avg = 0;
+      let prayersFull = 0;
+
+      for (let d = 1; d <= TEMPLATE.days; d++) {
+        const sc = calcDayScore(state[d]);
+        avg += sc.pct;
+        if (sc.complete) completed++;
+        else if (sc.partial) partial++;
+        else zero++;
+        if (Number(state[d].prayers || 0) === 5) prayersFull++;
+      }
+      avg = Math.round(avg / TEMPLATE.days);
+
+      const per = TEMPLATE.habits.map(h => {
+        let c = 0;
+        for (let d = 1; d <= TEMPLATE.days; d++) if (state[d][h.key]) c++;
+        return { label: h.label, count: c };
+      }).sort((a, b) => b.count - a.count);
+
+      el.statsBox.innerHTML = `
+      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px;">
+        <span class="badge ok">أيام مكتملة: ${completed}</span>
+        <span class="badge warn">أيام جزئية: ${partial}</span>
+        <span class="badge miss">أيام بلا إنجاز: ${zero}</span>
+        <span class="badge">متوسط: ${avg}%</span>
+        <span class="badge">اكتمال الصلاة (5/5): ${prayersFull} يوم</span>
+      </div>
+      <div class="hint" style="margin-bottom:8px;">أكثر البنود التزامًا (عدد الأيام):</div>
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        ${per.slice(0, 8).map(x => `
+          <div class="item" style="padding:10px 12px;">
+            <div class="meta">
+              <label>${stripHtml(x.label)}</label>
+              <div class="hint">${x.count} / ${TEMPLATE.days}</div>
+            </div>
+            <span class="pill">${Math.round((x.count / TEMPLATE.days) * 100)}%</span>
+          </div>
+        `).join("")}
+      </div>
+    `;
+    }
+
+    // FIX #3: Strip HTML tags for clean text display in table and stats
+    function stripHtml(str) {
+      const tmp = document.createElement("div");
+      tmp.innerHTML = str;
+      return tmp.textContent || tmp.innerText || "";
+    }
+
+    function renderMonthTable() {
+      let thead = "<thead><tr><th>اليوم</th><th>التاريخ</th>";
+      TEMPLATE.habits.forEach(h => thead += `<th>${escapeHtml(stripHtml(h.label))}</th>`);
+      thead += "<th>الصلاة</th><th>الإنجاز</th></tr></thead>";
+
+      let tbody = "<tbody>";
+      for (let d = 1; d <= TEMPLATE.days; d++) {
+        const dd = getDayDate(d);
+        const sc = calcDayScore(state[d]);
+        const cls = sc.complete ? "ok" : (sc.partial ? "warn" : "miss");
+
+        tbody += `<tr>
+        <td><strong>${d} رمضان</strong></td>
+        <td>${escapeHtml(dd.weekday)} ${escapeHtml(dd.dmy)}</td>
+      `;
+        TEMPLATE.habits.forEach(h => {
+          tbody += `<td>${state[d][h.key] ? "✓" : ""}</td>`;
+        });
+        tbody += `<td>${Number(state[d].prayers || 0)}/5</td>`;
+        tbody += `<td><span class="badge ${cls}">${sc.pct}%</span></td></tr>`;
+      }
+      tbody += "</tbody>";
+
+      el.monthTable.innerHTML = thead + tbody;
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    el.prevDay.addEventListener("click", () => { ui.currentDay = clampDay(ui.currentDay - 1); renderDay(); });
+    el.nextDay.addEventListener("click", () => { ui.currentDay = clampDay(ui.currentDay + 1); renderDay(); });
+
+    el.markAll.addEventListener("click", () => {
+      const d = ui.currentDay;
+      TEMPLATE.habits.forEach(h => state[d][h.key] = true);
+      saveState(state);
+      renderDay(); renderStats(); renderMonthTable();
+    });
+
+    el.clearDay.addEventListener("click", () => {
+      const d = ui.currentDay;
+      state[d] = emptyDay();
+      saveState(state);
+      renderDay(); renderStats(); renderMonthTable();
+    });
+
+    el.resetAll.addEventListener("click", () => {
+      const ok = confirm("سيتم مسح كل بيانات الشهر على هذا الجهاز. هل تريد المتابعة؟");
+      if (!ok) return;
+      for (let d = 1; d <= TEMPLATE.days; d++) state[d] = emptyDay();
+      saveState(state);
+      ui.currentDay = 1;
+      saveUI(ui);
+      renderDay(); renderStats(); renderMonthTable();
+    });
+
+    ui.currentDay = clampDay(ui.currentDay || 1);
+    saveUI(ui);
+    renderDay();
+    renderStats();
+    renderMonthTable();
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <circle cx="50" cy="50" r="46" fill="white" stroke="#ffb703" stroke-width="4"/>
+  <!-- Dome -->
+  <path d="M25 50 Q50 10 75 50" fill="#0b5d4a"/>
+  <!-- Pillars -->
+  <rect x="30" y="50" width="10" height="20" fill="#ffb703"/>
+  <rect x="45" y="45" width="10" height="25" fill="#ffb703"/>
+  <rect x="60" y="50" width="10" height="20" fill="#ffb703"/>
+  <!-- Book -->
+  <path d="M15 75 Q50 95 85 75 L85 65 Q50 85 15 65 Z" fill="#fff" stroke="#0b5d4a" stroke-width="2"/>
+  <path d="M50 65 L50 85" stroke="#0b5d4a" stroke-width="2"/>
+  <path d="M25 72 L45 72 M55 72 L75 72" stroke="#ffb703" stroke-width="1.5" stroke-linecap="round"/>
+</svg>
