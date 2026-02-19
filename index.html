@@ -314,10 +314,26 @@
     .centerInfo {
       padding: 10px 10px;
       border-radius: 16px;
-      border: 1px solid rgba(255, 255, 255, .18);
-      background: linear-gradient(135deg, rgba(255, 255, 255, .12), rgba(255, 255, 255, .06));
+      border: 1px solid rgba(31, 191, 154, .35);
+      /* Enhance border color */
+      background: linear-gradient(135deg, rgba(31, 191, 154, .14), rgba(11, 93, 74, .14));
+      /* Distinct background */
       text-align: center;
       backdrop-filter: blur(12px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, .2);
+      /* Add shadow */
+    }
+
+    /* Distinct Navigation Buttons */
+    .navRow .btn {
+      background: linear-gradient(135deg, rgba(216, 179, 90, .25), rgba(216, 179, 90, .10));
+      border: 1px solid rgba(216, 179, 90, .4);
+      color: #fff;
+      font-size: 13px;
+    }
+
+    .navRow .btn:active {
+      background: rgba(216, 179, 90, .35);
     }
 
     .centerInfo .d1 {
@@ -780,6 +796,10 @@
               style="font-size:11px; font-weight:500; color:var(--muted); background:rgba(0,0,0,.2); padding:3px 8px; border-radius:999px; border:1px solid rgba(255,255,255,.12);">لا
               تدخل في نسبة الإنجاز</span>
           </h2>
+          <div style="margin-right:auto;">
+            <input type="text" id="studentName" placeholder="( اسم الطالب )"
+              style="width:140px; padding:6px 12px; border-radius:99px; border:1px solid rgba(216,179,90,.3); background:rgba(0,0,0,.2); color:white; font-size:12px; text-align:center;">
+          </div>
         </div>
         <div class="cardBody">
           <div style="font-size:13px; color:var(--muted); margin-bottom:12px;">عدد الصفحات المقروءة بتجويد اليوم</div>
@@ -874,9 +894,34 @@
         { key: "awwabin", label: "صلاة الأوابين، ٢-٤-٦ ركعات، بعد سنة المغرب" },
         { key: "wird_sabah", label: "ورد الصباح" },
         { key: "wird_masaa", label: "ورد المساء" },
-        { key: "wird_masaa", label: "ورد المساء" }
+
+        { key: "daily_tasbih", label: "التسبيح اليومي (100 مرة)" }
       ]
     };
+
+    const TASBIH_TEXTS_1_10 = [
+      "سبحان من سبّحت له السماوات بأطرافها",
+      "سبحان من سبّحت له الأرضون بأكنافها",
+      "سبحان من سبّحت له النجوم بأنوارها",
+      "سبحان من سبّحت له البحار بأمواجها",
+      "سبحان من سبّحت له الحیتان في لُججها",
+      "سبحان من سبّحت له الجبال بأصواتها",
+      "سبحان من سبّحت له الأشجار بأوراقها",
+      "سبحان من سبّحت له الوحوش بفلواتها",
+      "سبحان من سبّحت له المخلوقات بلغاتها",
+      "سبحان الديان يوم الدين"
+    ];
+
+    function getTasbihText(day) {
+      if (day >= 1 && day <= 10) {
+        return TASBIH_TEXTS_1_10[day - 1] || "";
+      } else if (day >= 11 && day <= 20) {
+        return "يا محمود .. يا معبود .. يا ودود .. ارحمني برحمتك يا أرحم الراحمین يا رب العالمین";
+      } else if (day >= 21) {
+        return "يا ثقتي .. يا أملي .. أنت الرجا .. أنت الولي .. اختم بخیر عمل عند حضور الأجل";
+      }
+      return "";
+    }
 
 
     const QURAN_COUNTER_KEY = "ramadan_quran_counter_v1";
@@ -999,33 +1044,97 @@
 
       el.itemsList.innerHTML = "";
       TEMPLATE.habits.forEach(h => {
-        const wrap = document.createElement("div");
-        wrap.className = "item";
+        if (h.key === 'daily_tasbih') {
+          // Special rendering for Daily Tasbih
+          const txt = getTasbihText(dayNum);
+          const box = document.createElement("div");
+          box.className = "scaleBox";
+          box.style.marginBottom = "8px";
+          box.style.borderColor = "var(--mint)";
 
-        const meta = document.createElement("div");
-        meta.className = "meta";
-        const lab = document.createElement("label");
-        lab.innerHTML = h.label;
-        const hint = document.createElement("div");
-        hint.className = "hint";
-        hint.textContent = "تأشير عند الإتمام";
-        meta.appendChild(lab);
-        meta.appendChild(hint);
+          const labelDiv = document.createElement("div");
+          labelDiv.style.fontSize = "11px";
+          labelDiv.style.color = "var(--mint)";
+          labelDiv.style.fontWeight = "1050";
+          labelDiv.style.marginBottom = "4px";
+          labelDiv.textContent = "✨ تسبيح اليوم (100 مرة):";
 
-        const cb = document.createElement("input");
-        cb.type = "checkbox";
-        cb.checked = !!dayData[h.key];
-        cb.addEventListener("change", () => {
-          dayData[h.key] = cb.checked;
-          saveState(state);
-          renderDay();
-          renderStats();
-          renderMonthTable();
-        });
+          const textDiv = document.createElement("div");
+          textDiv.style.fontSize = "14px";
+          textDiv.style.fontWeight = "900";
+          textDiv.style.lineHeight = "1.4";
+          textDiv.style.color = "#fff";
+          textDiv.style.marginBottom = "8px";
+          textDiv.textContent = txt;
 
-        wrap.appendChild(meta);
-        wrap.appendChild(cb);
-        el.itemsList.appendChild(wrap);
+          const actionDiv = document.createElement("div");
+          actionDiv.style.display = "flex";
+          actionDiv.style.justifyContent = "flex-end";
+
+          const label = document.createElement("label");
+          label.style.display = "flex";
+          label.style.alignItems = "center";
+          label.style.gap = "8px";
+          label.style.background = "rgba(31,191,154,.1)";
+          label.style.padding = "6px 12px";
+          label.style.borderRadius = "12px";
+          label.style.border = "1px solid rgba(31,191,154,.3)";
+          label.style.cursor = "pointer";
+
+          const cb = document.createElement("input");
+          cb.type = "checkbox";
+          cb.checked = !!dayData[h.key];
+          cb.addEventListener("change", () => {
+            dayData[h.key] = cb.checked;
+            saveState(state);
+            renderDay();
+            renderStats();
+            renderMonthTable();
+          });
+
+          const span = document.createElement("span");
+          span.style.fontSize = "13px";
+          span.textContent = "تم الذكر 100 مرة";
+
+          label.appendChild(cb);
+          label.appendChild(span);
+          actionDiv.appendChild(label);
+
+          box.appendChild(labelDiv);
+          box.appendChild(textDiv);
+          box.appendChild(actionDiv);
+          el.itemsList.appendChild(box);
+
+        } else {
+          // Standard item rendering
+          const wrap = document.createElement("div");
+          wrap.className = "item";
+
+          const meta = document.createElement("div");
+          meta.className = "meta";
+          const lab = document.createElement("label");
+          lab.innerHTML = h.label;
+          // const hint = document.createElement("div");
+          // hint.className = "hint";
+          // hint.textContent = "تأشير عند الإتمام";
+          meta.appendChild(lab);
+          // meta.appendChild(hint);
+
+          const cb = document.createElement("input");
+          cb.type = "checkbox";
+          cb.checked = !!dayData[h.key];
+          cb.addEventListener("change", () => {
+            dayData[h.key] = cb.checked;
+            saveState(state);
+            renderDay();
+            renderStats();
+            renderMonthTable();
+          });
+
+          wrap.appendChild(meta);
+          wrap.appendChild(cb);
+          el.itemsList.appendChild(wrap);
+        }
       });
       el.note.value = dayData.note || "";
       el.note.oninput = () => {
@@ -1237,6 +1346,20 @@
     }
     fitrCheck.addEventListener("change", () => {
       localStorage.setItem(FITR_KEY, fitrCheck.checked);
+    });
+
+    // ========= Student Name =========
+    const STUDENT_NAME_KEY = "ramadan_student_name_v1";
+    const studentNameInput = document.getElementById("studentName");
+
+    function loadStudentName() {
+      return localStorage.getItem(STUDENT_NAME_KEY) || "";
+    }
+
+    studentNameInput.value = loadStudentName();
+
+    studentNameInput.addEventListener("input", () => {
+      localStorage.setItem(STUDENT_NAME_KEY, studentNameInput.value);
     });
 
     // ========= Initial Render =========
